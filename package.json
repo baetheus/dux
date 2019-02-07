@@ -1,0 +1,47 @@
+{
+  "name": "@nll/dux",
+  "version": "0.0.0",
+  "description": "Flux and flux-like tools",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -cw",
+    "test": "echo 'NO TESTS IMPLEMENTED!'",
+    "prepublishOnly": "npm run build",
+    "release": "npx standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nullpub/dux.git"
+  },
+  "keywords": [
+    "redux",
+    "ngrx",
+    "flux"
+  ],
+  "author": "Brandon Blaylock (brandon@null.pub)",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/nullpub/dux/issues"
+  },
+  "homepage": "https://github.com/nullpub/dux#readme",
+  "dependencies": {
+    "fp-ts": "^1.13.0",
+    "monocle-ts": "^1.5.3",
+    "rxjs": "^6.4.0"
+  },
+  "devDependencies": {
+    "rollup": "^1.1.2",
+    "rollup-plugin-delete": "^0.2.1",
+    "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "standard-version": "^4.4.0",
+    "tslib": "^1.9.3",
+    "typescript": "^3.3.1"
+  }
+}

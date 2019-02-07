@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "allowUnreachableCode": true,
+    "noImplicitAny": true,
+    "noErrorTruncation": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "lib": ["es2015"],
+    "target": "es5"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
