@@ -152,13 +152,14 @@ export class AsyncPending<E, D> {
   }
 
   // React pending helper
-  to<B>(
+  to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>
+    onSuccess: Function1<ToValue<D>, B>,
+    props?: O
   ): B {
     return this.option.fold(onPending, value =>
-      onSuccess({ pending: true, value })
+      onSuccess({ ...props, pending: true, value })
     );
   }
 }
@@ -286,10 +287,11 @@ export class AsyncFailure<E, D> {
   }
 
   // React pending helper
-  to<B>(
+  to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>
+    onSuccess: Function1<ToValue<D>, B>,
+    props?: O
   ): B {
     return onFailure({ error: this.error });
   }
@@ -410,11 +412,12 @@ export class AsyncSuccess<E, D> {
   }
 
   // React pending helper
-  to<B>(
+  to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>
+    onSuccess: Function1<ToValue<D>, B>,
+    props?: O
   ): B {
-    return onSuccess({ pending: false, value: this.value });
+    return onSuccess({ ...props, pending: false, value: this.value });
   }
 }

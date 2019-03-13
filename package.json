@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "test": "echo 'NO TESTS IMPLEMENTED!'",
+    "test": "tsc --noEmit",
     "prepublishOnly": "npm run build",
     "release": "npx standard-version"
   },
