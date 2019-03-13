@@ -158,7 +158,7 @@ export class AsyncPending<E, D> {
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
     onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>>
+    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
   ): B {
     return this.option.fold(onPending, value =>
       onSuccess({ ...props, pending: true, value } as P)
@@ -293,7 +293,7 @@ export class AsyncFailure<E, D> {
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
     onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>>
+    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
   ): B {
     return onFailure({ error: this.error });
   }
@@ -418,7 +418,7 @@ export class AsyncSuccess<E, D> {
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
     onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>>
+    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
   ): B {
     return onSuccess({ ...props, pending: false, value: this.value } as P);
   }
