@@ -16,20 +16,20 @@ import { actionCreatorFactory } from '@nll/dux';
 
 ### Action Factories
 
-Todo
+Todo Soon!
 
 ### Async Data ADT
 
-Todo
+Todo Soon!
 
 ### Async Reducer Factories
 
-Todo
+Todo Soon!
 
 ### Reducer Factories
 
-Todo
+Todo Soon!
 
 ### Rxjs operators (ngrx effects or redux-observable)
 
-Todo
+Todo Soon!
