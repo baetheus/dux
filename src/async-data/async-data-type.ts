@@ -1,5 +1,5 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
-import { Function1, Function2, identity, Lazy, Predicate, toString, Curried2 } from 'fp-ts/lib/function';
+import { Function1, Function2, identity, Lazy, Predicate, toString } from 'fp-ts/lib/function';
 import { none, Option, some } from 'fp-ts/lib/Option';
 import { Setoid } from 'fp-ts/lib/Setoid';
 
@@ -13,7 +13,19 @@ declare module 'fp-ts/lib/HKT' {
 export const URI = 'AsyncData';
 export type URI = typeof URI;
 
-export type AsyncData<E, D> = AsyncPending<E, D> | AsyncSuccess<E, D> | AsyncFailure<E, D>;
+export type AsyncData<E, D> =
+  | AsyncPending<E, D>
+  | AsyncSuccess<E, D>
+  | AsyncFailure<E, D>;
+
+interface ToValue<D> {
+  pending: boolean;
+  value: D;
+}
+
+interface ToError<E> {
+  error: E;
+}
 
 /**
  * AsyncPending
@@ -50,7 +62,11 @@ export class AsyncPending<E, D> {
   }
 
   // Fold
-  fold<B>(onPending: Function1<Option<D>, B>, __: Function1<E, B>, ___: Function1<D, B>): B {
+  fold<B>(
+    onPending: Function1<Option<D>, B>,
+    __: Function1<E, B>,
+    ___: Function1<D, B>
+  ): B {
     return onPending(this.option);
   }
 
@@ -65,7 +81,9 @@ export class AsyncPending<E, D> {
 
   // Chain
   chain<B>(f: Function1<D, AsyncData<E, B>>): AsyncData<E, B> {
-    return this.option.isSome() ? f(this.option.value) : new AsyncPending<E, B>(none);
+    return this.option.isSome()
+      ? f(this.option.value)
+      : new AsyncPending<E, B>(none);
   }
 
   // Maps
@@ -86,7 +104,9 @@ export class AsyncPending<E, D> {
 
   // Extend
   extend<B>(f: Function1<AsyncData<E, D>, B>): AsyncData<E, B> {
-    return this.option.isSome() ? new AsyncPending(some(f(this))) : ((this as unknown) as AsyncPending<E, B>);
+    return this.option.isSome()
+      ? new AsyncPending(some(f(this)))
+      : ((this as unknown) as AsyncPending<E, B>);
   }
 
   // GetOrElseL
@@ -124,13 +144,22 @@ export class AsyncPending<E, D> {
   recover(_: (error: E) => Option<D>): AsyncData<E, D> {
     return this;
   }
-  recoverMap<B>(_: (error: E) => Option<B>, g: (value: D) => B): AsyncData<E, B> {
+  recoverMap<B>(
+    _: (error: E) => Option<B>,
+    g: (value: D) => B
+  ): AsyncData<E, B> {
     return this.map(g);
   }
 
   // React pending helper
-  to<B>(onPending: B, onFailure: Function1<E, B>, onSuccess: Curried2<boolean, D, B>): B {
-    return this.option.fold(onPending, onSuccess(true));
+  to<B>(
+    onPending: B,
+    onFailure: Function1<ToError<E>, B>,
+    onSuccess: Function1<ToValue<D>, B>
+  ): B {
+    return this.option.fold(onPending, value =>
+      onSuccess({ pending: true, value })
+    );
   }
 }
 
@@ -168,7 +197,11 @@ export class AsyncFailure<E, D> {
   }
 
   // Fold
-  fold<B>(_: Function1<Option<D>, B>, onFailure: Function1<E, B>, ___: Function1<D, B>): B {
+  fold<B>(
+    _: Function1<Option<D>, B>,
+    onFailure: Function1<E, B>,
+    ___: Function1<D, B>
+  ): B {
     return onFailure(this.error);
   }
 
@@ -242,13 +275,23 @@ export class AsyncFailure<E, D> {
   recover(f: (error: E) => Option<D>): AsyncData<E, D> {
     return this.recoverMap(f, identity);
   }
-  recoverMap<B>(f: (error: E) => Option<B>, _: (value: D) => B): AsyncData<E, B> {
-    return f(this.error).fold((this as unknown) as AsyncData<E, B>, b => new AsyncSuccess(b));
+  recoverMap<B>(
+    f: (error: E) => Option<B>,
+    _: (value: D) => B
+  ): AsyncData<E, B> {
+    return f(this.error).fold(
+      (this as unknown) as AsyncData<E, B>,
+      b => new AsyncSuccess(b)
+    );
   }
 
   // React pending helper
-  to<B>(onPending: B, onFailure: Function1<E, B>, onSuccess: Curried2<boolean, D, B>): B {
-    return onFailure(this.error);
+  to<B>(
+    onPending: B,
+    onFailure: Function1<ToError<E>, B>,
+    onSuccess: Function1<ToValue<D>, B>
+  ): B {
+    return onFailure({ error: this.error });
   }
 }
 
@@ -280,14 +323,19 @@ export class AsyncSuccess<E, D> {
   }
 
   // Fold
-  fold<B>(_: Function1<Option<D>, B>, __: Function1<E, B>, onSuccess: Function1<D, B>): B {
+  fold<B>(
+    _: Function1<Option<D>, B>,
+    __: Function1<E, B>,
+    onSuccess: Function1<D, B>
+  ): B {
     return onSuccess(this.value);
   }
 
   // Ap
   ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
     return fab.fold(
-      opt => new AsyncPending<E, B>(opt.map(f => f(this.value))) as AsyncData<E, B>,
+      opt =>
+        new AsyncPending<E, B>(opt.map(f => f(this.value))) as AsyncData<E, B>,
       err => new AsyncFailure<E, B>(err),
       val => new AsyncSuccess<E, B>(val(this.value))
     );
@@ -354,12 +402,19 @@ export class AsyncSuccess<E, D> {
   recover(_: (error: E) => Option<D>): AsyncData<E, D> {
     return (this as unknown) as AsyncSuccess<E, D>;
   }
-  recoverMap<B>(_: (error: E) => Option<B>, f: (value: D) => B): AsyncData<E, B> {
+  recoverMap<B>(
+    _: (error: E) => Option<B>,
+    f: (value: D) => B
+  ): AsyncData<E, B> {
     return this.map(f);
   }
 
   // React pending helper
-  to<B>(onPending: B, onFailure: Function1<E, B>, onSuccess: Curried2<boolean, D, B>): B {
-    return onSuccess(false)(this.value);
+  to<B>(
+    onPending: B,
+    onFailure: Function1<ToError<E>, B>,
+    onSuccess: Function1<ToValue<D>, B>
+  ): B {
+    return onSuccess({ pending: false, value: this.value });
   }
 }
