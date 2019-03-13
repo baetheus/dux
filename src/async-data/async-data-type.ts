@@ -28,6 +28,7 @@ interface ToError<E> {
 }
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+type Args1<Fn> = Fn extends (_: infer A) => any ? A : never;
 
 /**
  * AsyncPending
@@ -154,14 +155,14 @@ export class AsyncPending<E, D> {
   }
 
   // React pending helper
-  to<B, P extends ToValue<D>>(
+  to<Fn extends Function, B>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
+    onSuccess: Fn,
+    props: Omit<Args1<B>, keyof ToValue<D>>
   ): B {
     return this.option.fold(onPending, value =>
-      onSuccess({ ...props, pending: true, value } as P)
+      onSuccess({ ...props, pending: true, value })
     );
   }
 }
@@ -289,11 +290,11 @@ export class AsyncFailure<E, D> {
   }
 
   // React pending helper
-  to<B, P extends ToValue<D>>(
+  to<Fn extends Function, B>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
+    onSuccess: Fn,
+    props: Omit<Args1<B>, keyof ToValue<D>>
   ): B {
     return onFailure({ error: this.error });
   }
@@ -414,12 +415,12 @@ export class AsyncSuccess<E, D> {
   }
 
   // React pending helper
-  to<B, P extends ToValue<D>>(
+  to<Fn extends Function, B>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<P, B>,
-    props: Omit<P, keyof ToValue<D>> = {} as Omit<P, keyof ToValue<D>>
+    onSuccess: Fn,
+    props: Omit<Args1<B>, keyof ToValue<D>>
   ): B {
-    return onSuccess({ ...props, pending: false, value: this.value } as P);
+    return onSuccess({ ...props, pending: false, value: this.value });
   }
 }
