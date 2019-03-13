@@ -18,10 +18,15 @@ export type AsyncData<E, D> =
   | AsyncSuccess<E, D>
   | AsyncFailure<E, D>;
 
-interface ToValue<D> {
-  pending: boolean;
-  value: D;
-}
+type ToValue<V, O> =
+  | (O & {
+      pending: boolean;
+      value: V;
+    })
+  | {
+      pending: boolean;
+      value: V;
+    };
 
 interface ToError<E> {
   error: E;
@@ -155,7 +160,7 @@ export class AsyncPending<E, D> {
   to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>,
+    onSuccess: Function1<ToValue<D, O>, B>,
     props?: O
   ): B {
     return this.option.fold(onPending, value =>
@@ -290,7 +295,7 @@ export class AsyncFailure<E, D> {
   to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>,
+    onSuccess: Function1<ToValue<D, O>, B>,
     props?: O
   ): B {
     return onFailure({ error: this.error });
@@ -415,7 +420,7 @@ export class AsyncSuccess<E, D> {
   to<B, O>(
     onPending: B,
     onFailure: Function1<ToError<E>, B>,
-    onSuccess: Function1<ToValue<D>, B>,
+    onSuccess: Function1<ToValue<D, O>, B>,
     props?: O
   ): B {
     return onSuccess({ ...props, pending: false, value: this.value });
