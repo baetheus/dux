@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.0.1](https://github.com/nullpub/dux/compare/v1.0.0...v1.0.1) (2019-03-13)
+## [1.0.2](https://github.com/nullpub/dux/compare/v1.0.1...v1.0.2) (2019-03-13)
 
 
 ### Bug Fixes
 
-* **async-data:** better typing for to method ([2df10ab](https://github.com/nullpub/dux/commit/2df10ab))
+* **async-data:** more to method type tests ([bd5d2c8](https://github.com/nullpub/dux/commit/bd5d2c8))
 
 
 
