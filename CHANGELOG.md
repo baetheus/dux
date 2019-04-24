@@ -2,12 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.0.5](https://github.com/nullpub/dux/compare/v1.0.4...v1.0.5) (2019-03-13)
-
-
-### Bug Fixes
-
-* **async-data:** removed props curry from to method because too much ([fd3ea54](https://github.com/nullpub/dux/commit/fd3ea54))
+## [1.0.6](https://github.com/nullpub/dux/compare/v1.0.5...v1.0.6) (2019-04-24)
 
 
 
