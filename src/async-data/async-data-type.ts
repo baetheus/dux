@@ -63,9 +63,9 @@ export class AsyncPending<E, D> {
   // Ap
   ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
     return fab.fold(
-      (fab as unknown) as AsyncData<E, B>,
-      () => (this as unknown) as AsyncData<E, B>,
-      () => (this as unknown) as AsyncData<E, B>
+      new AsyncPending(),
+      () => new AsyncPending(),
+      () => new AsyncPending()
     );
   }
 
@@ -172,9 +172,9 @@ export class AsyncFailure<E, D> {
   // Ap
   ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
     return fab.fold(
-      (fab as unknown) as AsyncData<E, B>,
-      err => new AsyncFailure(err, this.refreshing || fab.refreshing),
-      __ => new AsyncFailure(this.error, this.refreshing || fab.refreshing)
+      new AsyncFailure(this.error, true),
+      (e, r) => new AsyncFailure(e, this.refreshing || r),
+      (f, r) => new AsyncFailure(this.error, this.refreshing || r)
     );
   }
 
@@ -188,10 +188,10 @@ export class AsyncFailure<E, D> {
     return (this as unknown) as AsyncFailure<E, B>;
   }
   mapLeft<M>(f: Function1<E, M>): AsyncData<M, D> {
-    return new AsyncFailure(f(this.error));
+    return new AsyncFailure(f(this.error), this.refreshing);
   }
   bimap<V, B>(f: (e: E) => V, _: (d: D) => B): AsyncData<V, B> {
-    return new AsyncFailure(f(this.error));
+    return new AsyncFailure(f(this.error), this.refreshing);
   }
 
   // Reduce
@@ -282,9 +282,9 @@ export class AsyncSuccess<E, D> {
   // Ap
   ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
     return fab.fold(
-      (fab as unknown) as AsyncData<E, B>,
-      (err, r) => new AsyncFailure(err, this.refreshing || r),
-      (val, r) => new AsyncSuccess(val(this.value), this.refreshing || r)
+      new AsyncPending<E, B>() as AsyncData<E, B>,
+      (e, r) => new AsyncFailure<E, B>(e, this.refreshing || r),
+      (f, r) => new AsyncSuccess(f(this.value), this.refreshing || r)
     );
   }
 
@@ -295,13 +295,13 @@ export class AsyncSuccess<E, D> {
 
   // Maps
   map<B>(f: Function1<D, B>): AsyncData<E, B> {
-    return new AsyncSuccess(f(this.value));
+    return new AsyncSuccess(f(this.value), this.refreshing);
   }
   mapLeft<M>(_: Function1<E, M>): AsyncData<M, D> {
     return (this as unknown) as AsyncSuccess<M, D>;
   }
   bimap<V, B>(_: (e: E) => V, g: (d: D) => B): AsyncData<V, B> {
-    return new AsyncSuccess(g(this.value));
+    return new AsyncSuccess(g(this.value), this.refreshing);
   }
 
   // Reduce
@@ -311,7 +311,7 @@ export class AsyncSuccess<E, D> {
 
   // Extend
   extend<B>(f: Function1<AsyncData<E, D>, B>): AsyncData<E, B> {
-    return new AsyncSuccess(f(this));
+    return new AsyncSuccess(f(this), this.refreshing);
   }
 
   // GetOrElseL
