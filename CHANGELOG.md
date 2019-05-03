@@ -2,23 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-# [2.0.0](https://github.com/nullpub/dux/compare/v1.0.6...v2.0.0) (2019-04-25)
+## [2.0.1](https://github.com/nullpub/dux/compare/v2.0.0...v2.0.1) (2019-05-03)
 
 
-### Features
+### Bug Fixes
 
-* **async-data:** modify data to pull refreshing flag into data type ([86ce16c](https://github.com/nullpub/dux/commit/86ce16c))
-
-
-### BREAKING CHANGES
-
-* **async-data:** AsyncData type api changed
-
-- no more option in AsyncPending
-- removed to method on all AsyncData classes
-- added refreshing property to all AsyncData classes
-- fixed ord implementation
-- fixed asyncReducerFactory and asyncEntityReducer
+* **async-data:** fix propogation of pending in async data ([61c6100](https://github.com/nullpub/dux/commit/61c6100))
 
 
 
