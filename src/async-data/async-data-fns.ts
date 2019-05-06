@@ -247,6 +247,40 @@ export function combine<A, B, C, D, E>(
   c: AsyncData<E, C>,
   d: AsyncData<E, D>
 ): AsyncData<E, [A, B, C, D]>;
+export function combine<A, B, C, D, E, F>(
+  a: AsyncData<E, A>,
+  b: AsyncData<E, B>,
+  c: AsyncData<E, C>,
+  d: AsyncData<E, D>,
+  f: AsyncData<E, F>
+): AsyncData<E, [A, B, C, D, F]>;
+export function combine<A, B, C, D, E, F, G>(
+  a: AsyncData<E, A>,
+  b: AsyncData<E, B>,
+  c: AsyncData<E, C>,
+  d: AsyncData<E, D>,
+  f: AsyncData<E, F>,
+  g: AsyncData<E, G>
+): AsyncData<E, [A, B, C, D, F, G]>;
+export function combine<A, B, C, D, E, F, G, H>(
+  a: AsyncData<E, A>,
+  b: AsyncData<E, B>,
+  c: AsyncData<E, C>,
+  d: AsyncData<E, D>,
+  f: AsyncData<E, F>,
+  g: AsyncData<E, G>,
+  h: AsyncData<E, H>
+): AsyncData<E, [A, B, C, D, F, G, H]>;
+export function combine<A, B, C, D, E, F, G, H, I>(
+  a: AsyncData<E, A>,
+  b: AsyncData<E, B>,
+  c: AsyncData<E, C>,
+  d: AsyncData<E, D>,
+  f: AsyncData<E, F>,
+  g: AsyncData<E, G>,
+  h: AsyncData<E, H>,
+  i: AsyncData<E, I>
+): AsyncData<E, [A, B, C, D, F, G, H, I]>;
 export function combine<T, E>(...list: AsyncData<E, T>[]): AsyncData<E, T[]> {
   if (list.length === 0) {
     return of([]);
