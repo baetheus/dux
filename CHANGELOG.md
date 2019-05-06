@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [2.0.1](https://github.com/nullpub/dux/compare/v2.0.0...v2.0.1) (2019-05-03)
+# [2.1.0](https://github.com/nullpub/dux/compare/v2.0.1...v2.1.0) (2019-05-06)
 
 
-### Bug Fixes
+### Features
 
-* **async-data:** fix propogation of pending in async data ([61c6100](https://github.com/nullpub/dux/commit/61c6100))
+* **async-data:** added type overrides up to 8 items to combine fn ([0969902](https://github.com/nullpub/dux/commit/0969902))
 
 
 
