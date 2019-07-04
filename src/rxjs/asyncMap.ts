@@ -1,4 +1,4 @@
-import { from, Observable, of } from 'rxjs';
+import { from, merge, Observable, of } from 'rxjs';
 import { catchError, concatMap, exhaustMap, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 
 import { Action, ActionCreator, AsyncActionCreators, Meta } from '../actions/interfaces';
@@ -33,12 +33,12 @@ export const asyncSwitchMap = asyncMapFactory(switchMap);
 
 export const mapAction = <P, M extends Meta>(
   action: ActionCreator<P, M>,
-  project: (action: Action<P, M>) => Action<any, any>[],
-  keepAction: boolean = true
+  project: (action: Action<P, M>) => Action<any, any>[]
 ) => (obs: Observable<Action<any, any>>) =>
-  obs.pipe(
-    filter(action.match),
-    mergeMap(action =>
-      from((keepAction ? [action] : []).concat(project(action)))
+  merge(
+    obs,
+    obs.pipe(
+      filter(action.match),
+      mergeMap(action => of(project(action)))
     )
   );
