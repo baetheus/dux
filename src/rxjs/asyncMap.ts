@@ -35,6 +35,4 @@ export const mapAction = <P, M extends Meta>(
   action: ActionCreator<P, M>,
   project: (action: Action<P, M>) => Action<any, any>[]
 ) => (obs: Observable<Action<any, any>>) =>
-  obs.pipe(
-    mergeMap(a => (action.match(a) ? from(project(a).concat(a)) : of(a)))
-  );
+  obs.pipe(mergeMap(a => (action.match(a) ? from([a, ...project(a)]) : of(a))));
