@@ -30,9 +30,9 @@
     "url": "https://github.com/nullpub/dux/issues"
   },
   "homepage": "https://github.com/nullpub/dux#readme",
-  "peerDependencies": {
-    "fp-ts": "^1",
-    "monocle-ts": "^1",
+  "dependencies": {
+    "fp-ts": "^2",
+    "monocle-ts": "^2",
     "rxjs": "^6"
   },
   "devDependencies": {
@@ -42,8 +42,8 @@
     "rollup-plugin-typescript2": "^0.19.3",
     "standard-version": "^5.0.0",
     "tslib": "^1.9.3",
-    "fp-ts": "^1",
-    "monocle-ts": "^1",
+    "fp-ts": "^2",
+    "monocle-ts": "^2",
     "rxjs": "^6",
     "typescript": "^3.3.3333"
   }

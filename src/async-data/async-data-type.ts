@@ -1,13 +1,12 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
-import { Function1, Function2, Lazy, Predicate, toString } from 'fp-ts/lib/function';
+import { FunctionN, Lazy, Predicate } from 'fp-ts/lib/function';
 import { none, Option, some } from 'fp-ts/lib/Option';
-import { Setoid } from 'fp-ts/lib/Setoid';
 
 // HKT/URI
 
 declare module 'fp-ts/lib/HKT' {
-  interface URI2HKT2<L, A> {
-    AsyncData: AsyncData<L, A>;
+  interface URItoKind2<E, A> {
+    AsyncData: AsyncData<E, A>;
   }
 }
 export const URI = 'AsyncData';
@@ -54,44 +53,40 @@ export class AsyncPending<E, D> {
   // Fold
   fold<B>(
     onPending: B,
-    onFailure: Function2<E, boolean, B>,
-    onSuccess: Function2<D, boolean, B>
+    onFailure: FunctionN<[E, boolean], B>,
+    onSuccess: FunctionN<[D, boolean], B>
   ): B {
     return onPending;
   }
 
   // Ap
-  ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
-    return fab.fold(
-      new AsyncPending(),
-      () => new AsyncPending(),
-      () => new AsyncPending()
-    );
+  ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> {
+    return (this as unknown) as AsyncPending<E, B>;
   }
 
   // Chain
-  chain<B>(f: Function1<D, AsyncData<E, B>>): AsyncData<E, B> {
+  chain<B>(f: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> {
     return (this as unknown) as AsyncData<E, B>;
   }
 
   // Maps
-  map<B>(f: Function1<D, B>): AsyncData<E, B> {
+  map<B>(f: FunctionN<[D], B>): AsyncData<E, B> {
     return (this as unknown) as AsyncData<E, B>;
   }
-  mapLeft<M>(_: Function1<E, M>): AsyncData<M, D> {
+  mapLeft<M>(_: FunctionN<[E], M>): AsyncData<M, D> {
     return (this as unknown) as AsyncPending<M, D>;
   }
-  bimap<V, B>(_: (e: E) => V, __: (d: D) => B): AsyncData<V, B> {
+  bimap<V, B>(_: FunctionN<[E], V>, __: FunctionN<[D], B>): AsyncData<V, B> {
     return (this as unknown) as AsyncData<V, B>;
   }
 
   // Reduce
-  reduce<B>(b: B, _: Function2<B, D, B>): B {
+  reduce<B>(b: B, _: FunctionN<[B, D], B>): B {
     return b;
   }
 
   // Extend
-  extend<B>(f: Function1<AsyncData<E, D>, B>): AsyncData<E, B> {
+  extend<B>(f: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> {
     return (this as unknown) as AsyncPending<E, B>;
   }
 
@@ -121,9 +116,6 @@ export class AsyncPending<E, D> {
   }
 
   // Utility
-  contains(_: Setoid<D>, __: D): boolean {
-    return false;
-  }
   exists(_: Predicate<D>): boolean {
     return false;
   }
@@ -163,44 +155,40 @@ export class AsyncFailure<E, D> {
   // Fold
   fold<B>(
     onPending: B,
-    onFailure: Function2<E, boolean, B>,
-    onSuccess: Function2<D, boolean, B>
+    onFailure: FunctionN<[E, boolean], B>,
+    onSuccess: FunctionN<[D, boolean], B>
   ): B {
     return onFailure(this.error, this.refreshing);
   }
 
   // Ap
-  ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
-    return fab.fold(
-      new AsyncFailure(this.error, true),
-      (e, r) => new AsyncFailure(e, this.refreshing || r),
-      (f, r) => new AsyncFailure(this.error, this.refreshing || r)
-    );
+  ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> {
+    return new AsyncFailure(this.error, this.refreshing || fab.refreshing);
   }
 
   // Chain
-  chain<B>(_: Function1<D, AsyncData<E, B>>): AsyncData<E, B> {
+  chain<B>(_: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> {
     return (this as unknown) as AsyncFailure<E, B>;
   }
 
   // Maps
-  map<B>(_: Function1<D, B>): AsyncData<E, B> {
+  map<B>(_: FunctionN<[D], B>): AsyncData<E, B> {
     return (this as unknown) as AsyncFailure<E, B>;
   }
-  mapLeft<M>(f: Function1<E, M>): AsyncData<M, D> {
+  mapLeft<M>(f: FunctionN<[E], M>): AsyncData<M, D> {
     return new AsyncFailure(f(this.error), this.refreshing);
   }
-  bimap<V, B>(f: (e: E) => V, _: (d: D) => B): AsyncData<V, B> {
+  bimap<V, B>(f: FunctionN<[E], V>, _: FunctionN<[D], B>): AsyncData<V, B> {
     return new AsyncFailure(f(this.error), this.refreshing);
   }
 
   // Reduce
-  reduce<B>(b: B, _: Function2<B, D, B>): B {
+  reduce<B>(b: B, _: FunctionN<[B, D], B>): B {
     return b;
   }
 
   // Extend
-  extend<B>(_: Function1<AsyncData<E, D>, B>): AsyncData<E, B> {
+  extend<B>(_: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> {
     return (this as unknown) as AsyncFailure<E, B>;
   }
 
@@ -226,13 +214,10 @@ export class AsyncFailure<E, D> {
     return null;
   }
   toString(): string {
-    return `asyncFailure(${toString(this.error)})`;
+    return `asyncFailure()`;
   }
 
   // Utility
-  contains(_: Setoid<D>, __: D): boolean {
-    return false;
-  }
   exists(_: Predicate<D>): boolean {
     return false;
   }
@@ -273,14 +258,14 @@ export class AsyncSuccess<E, D> {
   // Fold
   fold<B>(
     onPending: B,
-    onFailure: Function2<E, boolean, B>,
-    onSuccess: Function2<D, boolean, B>
+    onFailure: FunctionN<[E, boolean], B>,
+    onSuccess: FunctionN<[D, boolean], B>
   ): B {
     return onSuccess(this.value, this.refreshing);
   }
 
   // Ap
-  ap<B>(fab: AsyncData<E, Function1<D, B>>): AsyncData<E, B> {
+  ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> {
     return fab.fold(
       new AsyncPending<E, B>() as AsyncData<E, B>,
       (e, r) => new AsyncFailure<E, B>(e, this.refreshing || r),
@@ -289,15 +274,15 @@ export class AsyncSuccess<E, D> {
   }
 
   // Chain
-  chain<B>(f: Function1<D, AsyncData<E, B>>): AsyncData<E, B> {
+  chain<B>(f: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> {
     return f(this.value);
   }
 
   // Maps
-  map<B>(f: Function1<D, B>): AsyncData<E, B> {
+  map<B>(f: FunctionN<[D], B>): AsyncData<E, B> {
     return new AsyncSuccess(f(this.value), this.refreshing);
   }
-  mapLeft<M>(_: Function1<E, M>): AsyncData<M, D> {
+  mapLeft<M>(_: FunctionN<[E], M>): AsyncData<M, D> {
     return (this as unknown) as AsyncSuccess<M, D>;
   }
   bimap<V, B>(_: (e: E) => V, g: (d: D) => B): AsyncData<V, B> {
@@ -305,12 +290,12 @@ export class AsyncSuccess<E, D> {
   }
 
   // Reduce
-  reduce<B>(b: B, f: Function2<B, D, B>): B {
+  reduce<B>(b: B, f: FunctionN<[B, D], B>): B {
     return f(b, this.value);
   }
 
   // Extend
-  extend<B>(f: Function1<AsyncData<E, D>, B>): AsyncData<E, B> {
+  extend<B>(f: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> {
     return new AsyncSuccess(f(this), this.refreshing);
   }
 
@@ -336,13 +321,10 @@ export class AsyncSuccess<E, D> {
     return this.value;
   }
   toString(): string {
-    return `asyncSuccess(${toString(this.value)})`;
+    return `asyncSuccess()`;
   }
 
   // Utility
-  contains(S: Setoid<D>, d: D): boolean {
-    return S.equals(this.value, d);
-  }
   exists(f: Predicate<D>): boolean {
     return f(this.value);
   }

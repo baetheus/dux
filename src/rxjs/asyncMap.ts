@@ -21,10 +21,7 @@ const asyncMapFactory = (mapper: typeof mergeMap) => <P, R, E, M extends Meta>(
   );
 
 /**
- * Filters on the `pending` Action of the AsyncActionCreator.
- * Invokes the project (commonly a http request).
- * On success, returns the `success` Action
- * Else, returns the `failure` Action
+ * Filter an action into multiple other actions.
  */
 export const asyncConcatMap = asyncMapFactory(concatMap);
 export const asyncExhaustMap = asyncMapFactory(exhaustMap);

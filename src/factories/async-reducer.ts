@@ -29,8 +29,13 @@ export const asyncEntityReducer = <P, R, E, M, S>(
   lens: Lens<S, Record<string, AsyncData<E, R>>>,
   toId: Lens<P, string>
 ) => {
-  const idLens = (id: string) =>
-    lens.compose(Lens.fromNullableProp(id, pending<E, R>()));
+  const idLens = (id: keyof Record<string, AsyncData<E, R>>) =>
+    lens.compose(
+      Lens.fromNullableProp<Record<string, AsyncData<E, R>>>()(
+        id,
+        pending<E, R>()
+      )
+    );
 
   const pendingReducer = (s: S, payload: P) =>
     idLens(toId.get(payload)).modify(prev =>
