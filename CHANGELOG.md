@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.1.0](https://github.com/nullpub/dux/compare/v4.0.0...v4.1.0) (2019-07-30)
+
+
+### Features
+
+* added AsyncInitial to AsyncData and initial documentation ([4a2aba5](https://github.com/nullpub/dux/commit/4a2aba5))
+
+
+
 # [4.0.0](https://github.com/nullpub/dux/compare/v3.0.3...v4.0.0) (2019-07-29)
 
 
