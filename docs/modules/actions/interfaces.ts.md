@@ -168,7 +168,7 @@ Interface for action matcher property
 
 ```ts
 export type ActionMatcher<P, M> = {
-  readonly match: (action: Action<any, any>) => action is Action<P, M>
+  readonly match: (action: TypedAction) => action is Action<P, M>
 }
 ```
 

@@ -21,7 +21,7 @@ const collapseType = (...types: string[]) =>
  * Action Combinators
  */
 const matcherFactory = <P, M>(type: string): ActionMatcher<P, M> => ({
-  match: (action: Action<any>): action is Action<P, M> => action.type === type,
+  match: (action: TypedAction): action is Action<P, M> => action.type === type,
 });
 
 const typeFactory = (...types: string[]): TypedAction => ({

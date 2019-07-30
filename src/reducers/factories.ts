@@ -1,8 +1,8 @@
 import { Lens } from 'monocle-ts';
 
-import { AsyncActionCreators, Failure, Success } from '../actions';
+import { AsyncActionCreators, Failure, Meta, Success } from '../actions';
 import { AsyncData, failure, initial, pending, success } from '../async-data';
-import { caseFn, reducerFn } from '../reducers';
+import { caseFn, reducerFn } from './fns';
 
 /**
  * Generate a reducer that wraps a single AsyncData store value
@@ -62,3 +62,24 @@ export const asyncEntityReducer = <P, R, E, M, S>(
     caseFn(action.failure, failureReducer)
   );
 };
+
+/**
+ * Generates factories an asyncReducerFactory and asyncEntityReducer from an action.
+ *
+ * @since 5.1.0
+ */
+export const asyncReducersFactory = <
+  P = void,
+  R = void,
+  E = Error,
+  M extends Meta = Meta
+>(
+  action: AsyncActionCreators<P, R, E, M>
+) => ({
+  reducer: <S>(lens: Lens<S, AsyncData<E, R>>) =>
+    asyncReducerFactory(action, lens),
+  entityReducer: <S>(
+    lens: Lens<S, Record<string, AsyncData<E, R>>>,
+    toId: Lens<P, string>
+  ) => asyncEntityReducer(action, lens, toId),
+});

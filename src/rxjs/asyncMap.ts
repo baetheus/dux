@@ -1,7 +1,7 @@
 import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, exhaustMap, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 
-import { Action, ActionCreator, AsyncActionCreators, Meta } from '../actions/interfaces';
+import { Action, ActionCreator, AsyncActionCreators, Meta, TypedAction } from '../actions/interfaces';
 
 /**
  * Takes a lettable map operator and creates asyncMap operator
@@ -11,7 +11,7 @@ import { Action, ActionCreator, AsyncActionCreators, Meta } from '../actions/int
 const asyncMapFactory = (mapper: typeof mergeMap) => <P, R, E, M extends Meta>(
   action: AsyncActionCreators<P, R, E, M>,
   project: (params: P, meta: M) => Observable<R>
-) => (obs: Observable<Action<any, any>>) =>
+) => (obs: Observable<TypedAction>) =>
   obs.pipe(
     filter(action.pending.match),
     mapper(({ payload: params, meta }) =>
