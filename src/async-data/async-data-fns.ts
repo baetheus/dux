@@ -6,7 +6,7 @@ import { Bifunctor2 } from 'fp-ts/lib/Bifunctor';
 import * as E from 'fp-ts/lib/Either';
 import { Extend2 } from 'fp-ts/lib/Extend';
 import { Foldable2 } from 'fp-ts/lib/Foldable';
-import { FunctionN, identity, Lazy, Predicate } from 'fp-ts/lib/function';
+import { FunctionN, identity, Predicate } from 'fp-ts/lib/function';
 import { HKT } from 'fp-ts/lib/HKT';
 import { Monad2 } from 'fp-ts/lib/Monad';
 import { Monoid } from 'fp-ts/lib/Monoid';
