@@ -1,79 +1,50 @@
-import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+---
+title: rxjs/filterActions.ts
+nav_order: 15
+parent: Modules
+---
 
-import { Action, ActionCreator, Meta } from '../actions/interfaces';
+---
 
-/**
- * RxJS operator to filter acitons by multiple `ActionCreator`s.
- * @param actions The `ActionCreator`s to match against the actions.
- *
- * @since 5.0.0
- */
-export const filterActions: FilterActions = (
-  ...actions: ActionCreator<any, any>[]
-) => {
-  const actionMatcher = (a: Action<any, any>) =>
-    actions.some(({ match }) => match(a));
-  return filter(actionMatcher);
-};
+<h2 class="text-delta">Table of contents</h2>
 
-/**
- * Interface for the filterActions operator.
- *
- * @since 5.0.0
- */
+- [FilterActions (interface)](#filteractions-interface)
+- [filterActions (function)](#filteractions-function)
+
+---
+
+# FilterActions (interface)
+
+Interface for the filterActions operator.
+
+**Signature**
+
+```ts
 export interface FilterActions {
   <P1, M1 extends Meta>(a1: ActionCreator<P1, M1>): (
     source: Observable<Action<any, Meta>>
-  ) => Observable<Action<P1, M1>>;
+  ) => Observable<Action<P1, M1>>
 
-  <P1, M1 extends Meta, P2, M2 extends Meta>(
-    a1: ActionCreator<P1, M1>,
-    a2: ActionCreator<P2, M2>
-  ): (
+  <P1, M1 extends Meta, P2, M2 extends Meta>(a1: ActionCreator<P1, M1>, a2: ActionCreator<P2, M2>): (
     source: Observable<Action<any, Meta>>
-  ) => Observable<Action<P1, M1> | Action<P2, M2>>;
+  ) => Observable<Action<P1, M1> | Action<P2, M2>>
 
   <P1, M1 extends Meta, P2, M2 extends Meta, P3, M3 extends Meta>(
     a1: ActionCreator<P1, M1>,
     a2: ActionCreator<P2, M2>,
     a3: ActionCreator<P3, M3>
-  ): (
-    source: Observable<Action<any, Meta>>
-  ) => Observable<Action<P1, M1> | Action<P2, M2> | Action<P3, M3>>;
+  ): (source: Observable<Action<any, Meta>>) => Observable<Action<P1, M1> | Action<P2, M2> | Action<P3, M3>>
 
-  <
-    P1,
-    M1 extends Meta,
-    P2,
-    M2 extends Meta,
-    P3,
-    M3 extends Meta,
-    P4,
-    M4 extends Meta
-  >(
+  <P1, M1 extends Meta, P2, M2 extends Meta, P3, M3 extends Meta, P4, M4 extends Meta>(
     a1: ActionCreator<P1, M1>,
     a2: ActionCreator<P2, M2>,
     a3: ActionCreator<P3, M3>,
     a4: ActionCreator<P4, M4>
   ): (
     source: Observable<Action<any, Meta>>
-  ) => Observable<
-    Action<P1, M1> | Action<P2, M2> | Action<P3, M3> | Action<P4, M4>
-  >;
+  ) => Observable<Action<P1, M1> | Action<P2, M2> | Action<P3, M3> | Action<P4, M4>>
 
-  <
-    P1,
-    M1 extends Meta,
-    P2,
-    M2 extends Meta,
-    P3,
-    M3 extends Meta,
-    P4,
-    M4 extends Meta,
-    P5,
-    M5 extends Meta
-  >(
+  <P1, M1 extends Meta, P2, M2 extends Meta, P3, M3 extends Meta, P4, M4 extends Meta, P5, M5 extends Meta>(
     a1: ActionCreator<P1, M1>,
     a2: ActionCreator<P2, M2>,
     a3: ActionCreator<P3, M3>,
@@ -81,13 +52,7 @@ export interface FilterActions {
     a5: ActionCreator<P5, M5>
   ): (
     source: Observable<Action<any, Meta>>
-  ) => Observable<
-    | Action<P1, M1>
-    | Action<P2, M2>
-    | Action<P3, M3>
-    | Action<P4, M4>
-    | Action<P5, M5>
-  >;
+  ) => Observable<Action<P1, M1> | Action<P2, M2> | Action<P3, M3> | Action<P4, M4> | Action<P5, M5>>
 
   <
     P1,
@@ -111,14 +76,7 @@ export interface FilterActions {
     a6: ActionCreator<P6, M6>
   ): (
     source: Observable<Action<any, Meta>>
-  ) => Observable<
-    | Action<P1, M1>
-    | Action<P2, M2>
-    | Action<P3, M3>
-    | Action<P4, M4>
-    | Action<P5, M5>
-    | Action<P6, M6>
-  >;
+  ) => Observable<Action<P1, M1> | Action<P2, M2> | Action<P3, M3> | Action<P4, M4> | Action<P5, M5> | Action<P6, M6>>
 
   <
     P1,
@@ -146,14 +104,8 @@ export interface FilterActions {
   ): (
     source: Observable<Action<any, Meta>>
   ) => Observable<
-    | Action<P1, M1>
-    | Action<P2, M2>
-    | Action<P3, M3>
-    | Action<P4, M4>
-    | Action<P5, M5>
-    | Action<P6, M6>
-    | Action<P7, M7>
-  >;
+    Action<P1, M1> | Action<P2, M2> | Action<P3, M3> | Action<P4, M4> | Action<P5, M5> | Action<P6, M6> | Action<P7, M7>
+  >
 
   <
     P1,
@@ -192,7 +144,7 @@ export interface FilterActions {
     | Action<P6, M6>
     | Action<P7, M7>
     | Action<P8, M8>
-  >;
+  >
 
   <
     P1,
@@ -235,7 +187,7 @@ export interface FilterActions {
     | Action<P7, M7>
     | Action<P8, M8>
     | Action<P9, M9>
-  >;
+  >
 
   <
     P1,
@@ -282,5 +234,22 @@ export interface FilterActions {
     | Action<P8, M8>
     | Action<P9, M9>
     | Action<P10, M10>
-  >;
+  >
 }
+```
+
+Added in v5.0.0
+
+# filterActions (function)
+
+RxJS operator to filter acitons by multiple `ActionCreator`s.
+
+**Signature**
+
+```ts
+export const filterActions: FilterActions = (
+  ...actions: ActionCreator<any, any>[]
+) => ...
+```
+
+Added in v5.0.0

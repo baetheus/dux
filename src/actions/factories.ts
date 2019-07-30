@@ -1,53 +1,110 @@
-import { Action, ActionCreator, ActionCreatorFactory, AsyncActionCreators, Failure, Meta, Success } from './interfaces';
-
-// TODO Revisit this api
+import {
+  Action,
+  ActionCreator,
+  ActionCreatorBundle,
+  ActionFunction,
+  ActionMatcher,
+  AsyncActionCreators,
+  Failure,
+  Meta,
+  Success,
+  TypedAction,
+} from './interfaces';
 
 /**
- * Factory for creating actions.
- * @param group
+ * Utilities
  */
-export const actionCreatorFactory = (group: string): ActionCreatorFactory => {
-  const ac = actionCreator(group);
-  return Object.assign(ac, { async: asyncActionCreators(group, ac) });
-};
+const collapseType = (...types: string[]) =>
+  types.length > 0 ? types.join('/') : 'UNKNOWN_TYPE';
 
 /**
- * Syncronous Actions creator.
- * @param action
- * @param [commonMeta]
- * @param [error]
+ * Action Combinators
  */
-const actionCreator = (group: string) => <P = void, M extends Meta = {}>(
-  action: string,
+const matcherFactory = <P, M>(type: string): ActionMatcher<P, M> => ({
+  match: (action: Action<any>): action is Action<P, M> => action.type === type,
+});
+
+const typeFactory = (...types: string[]): TypedAction => ({
+  type: collapseType(...types),
+});
+
+const actionFactory = <P, M extends Meta = Meta>(
+  type: string,
   commonMeta?: M,
   error = false
-): ActionCreator<P, M> => {
-  const type = group + '/' + action;
-  return Object.assign(
-    <M2 extends Meta>(payload: P, meta?: M2): Action<P, M & M2> => ({
-      type,
-      payload,
-      meta: Object.assign({}, commonMeta, meta),
-      error: error === true || !(error === false || !(payload instanceof Error)),
-    }),
-    {
-      type,
-      match: (a: Action<any, any>): a is Action<P, M> => a.type === type,
-    }
-  );
-};
+): ActionFunction<P, M> =>
+  ((payload: P, meta: M) => ({
+    type,
+    error,
+    meta: { ...commonMeta, ...meta },
+    payload,
+  })) as ActionFunction<P, M>;
 
 /**
- * Async Actions creator factory.
- * @param result
- * @param [commonMeta]
+ * General action creator factory
+ *
+ * @since 5.0.0
  */
-const asyncActionCreators = (
+export const actionCreator = <P, M extends Meta = Meta>(
+  type: string,
+  commonMeta?: M,
+  error = false
+): ActionCreator<P, M> =>
+  Object.assign(
+    actionFactory<P, M>(type, commonMeta, error),
+    typeFactory(type),
+    matcherFactory<P, M>(type)
+  );
+
+/**
+ * Async action creator factory
+ *
+ * @since 5.0.0
+ */
+export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
   group: string,
-  ac: <P, M extends Meta>(a: string, b?: M, c?: boolean) => ActionCreator<P, M>
-) => <P, S, E, M extends Meta>(result: string, commonMeta = {} as M): AsyncActionCreators<P, S, E, M> => ({
-  type: group + '/' + result,
-  pending: ac<P, M>(`${result}_PENDING`, commonMeta),
-  success: ac<Success<P, S>, M>(`${result}_SUCCESS`, commonMeta),
-  failure: ac<Failure<P, E>, M>(`${result}_FAILURE`, commonMeta, true),
+  commonMeta?: M
+): AsyncActionCreators<P, R, E, M> => ({
+  pending: actionCreator<P, M>(collapseType(group, 'PENDING'), commonMeta),
+  failure: actionCreator<Failure<P, E>, M>(
+    collapseType(group, 'FAILURE'),
+    commonMeta,
+    true
+  ),
+  success: actionCreator<Success<P, R>, M>(
+    collapseType(group, 'Success'),
+    commonMeta
+  ),
 });
+
+/**
+ * General action group creator (wraps other action creators into a group)
+ *
+ * @since 5.0.0
+ */
+export const actionCreatorFactory = <M extends Meta = Meta>(
+  group: string,
+  groupMeta?: M
+): ActionCreatorBundle<M> => {
+  const simple = <P, M2 extends Meta = Meta>(
+    type: string,
+    defaultMeta?: M2,
+    error = false
+  ) =>
+    actionCreator<P, M & M2>(
+      collapseType(group, type),
+      Object.assign({}, groupMeta, defaultMeta),
+      error
+    );
+
+  const async = <P, R, E, M2 extends Meta>(type: string, defaultMeta?: M2) =>
+    asyncActionCreators<P, R, E, M & M2>(
+      collapseType(group, type),
+      Object.assign({}, groupMeta, defaultMeta)
+    );
+
+  return {
+    simple,
+    async,
+  };
+};

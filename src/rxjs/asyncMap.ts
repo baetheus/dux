@@ -5,6 +5,8 @@ import { Action, ActionCreator, AsyncActionCreators, Meta } from '../actions/int
 
 /**
  * Takes a lettable map operator and creates asyncMap operator
+ *
+ * @since 5.0.0
  */
 const asyncMapFactory = (mapper: typeof mergeMap) => <P, R, E, M extends Meta>(
   action: AsyncActionCreators<P, R, E, M>,
@@ -21,13 +23,41 @@ const asyncMapFactory = (mapper: typeof mergeMap) => <P, R, E, M extends Meta>(
   );
 
 /**
- * Filter an action into multiple other actions.
+ * Wraps an asyncAction in a concatMap
+ *
+ * @since 5.0.0
  */
 export const asyncConcatMap = asyncMapFactory(concatMap);
+
+/**
+ * Wraps an asyncAction in an exhaustMap
+ *
+ * @since 5.0.0
+ */
 export const asyncExhaustMap = asyncMapFactory(exhaustMap);
+
+/**
+ * Wraps an asyncAction in a mergeMap
+ *
+ * @since 5.0.0
+ */
 export const asyncMergeMap = asyncMapFactory(mergeMap);
+
+/**
+ * Wraps an asyncAction in a switchMap
+ *
+ * @since 5.0.0
+ */
 export const asyncSwitchMap = asyncMapFactory(switchMap);
 
+/**
+ * Filters on an action and a projection, and merges the output
+ * of the projection with the original action.
+ *
+ * ie. originalAction => [originalAction, ...project(originalAction)]
+ *
+ * @since 5.0.0
+ */
 export const mapAction = <P, M extends Meta>(
   action: ActionCreator<P, M>,
   project: (action: Action<P, M>) => Action<any, any>[]
