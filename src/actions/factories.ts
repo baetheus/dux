@@ -72,7 +72,7 @@ export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
     true
   ),
   success: actionCreator<Success<P, R>, M>(
-    collapseType(group, 'Success'),
+    collapseType(group, 'SUCCESS'),
     commonMeta
   ),
 });
