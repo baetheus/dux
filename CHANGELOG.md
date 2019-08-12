@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.2](https://github.com/nullpub/dux/compare/v5.1.1...v5.1.2) (2019-08-12)
+
+
+### Bug Fixes
+
+* output type for initial, pending, failure, success lifted to sum ([4ee5b00](https://github.com/nullpub/dux/commit/4ee5b00))
+
+
+
 ## [5.1.1](https://github.com/nullpub/dux/compare/v5.1.1-build-0.0...v5.1.1) (2019-07-30)
 
 
