@@ -20,21 +20,21 @@ import { AsyncData, AsyncFailure, AsyncInitial, AsyncPending, AsyncSuccess, URI 
  *
  * @since 5.0.0
  */
-export const initial = <E, D>() => new AsyncInitial<E, D>();
+export const initial = <E, D>(): AsyncData<E, D> => new AsyncInitial<E, D>();
 
 /**
  * Creates AsyncPending<E, D>
  *
  * @since 5.0.0
  */
-export const pending = <E, D>() => new AsyncPending<E, D>();
+export const pending = <E, D>(): AsyncData<E, D> => new AsyncPending<E, D>();
 
 /**
  * Creates AsyncFailure<E, D>
  *
  * @since 5.0.0
  */
-export const failure = <E, D>(error: E, refreshing = false) =>
+export const failure = <E, D>(error: E, refreshing = false): AsyncData<E, D> =>
   new AsyncFailure<E, D>(error, refreshing);
 
 /**
@@ -43,7 +43,7 @@ export const failure = <E, D>(error: E, refreshing = false) =>
  * @since 5.0.0
  */
 
-export const success = <E, D>(value: D, refreshing = false) =>
+export const success = <E, D>(value: D, refreshing = false): AsyncData<E, D> =>
   new AsyncSuccess<E, D>(value, refreshing);
 
 /**
