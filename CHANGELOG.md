@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [6.0.0](https://github.com/nullpub/dux/compare/v5.1.2...v6.0.0) (2019-08-14)
+
+
+### Features
+
+* removed AsyncData and switched to DatumEither from @nll/datum ([56196f8](https://github.com/nullpub/dux/commit/56196f8))
+
+
+### BREAKING CHANGES
+
+* DatumEither added, AsyncData removed
+
+
+
 ## [5.1.2](https://github.com/nullpub/dux/compare/v5.1.1...v5.1.2) (2019-08-12)
 
 ### Bug Fixes
