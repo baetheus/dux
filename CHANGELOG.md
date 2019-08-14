@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.1](https://github.com/nullpub/dux/compare/v6.0.0...v6.0.1) (2019-08-14)
+
+
+### Bug Fixes
+
+* fix builds to be properly importable (es6/lib) ([cf1e98e](https://github.com/nullpub/dux/commit/cf1e98e))
+
+
+
 # [6.0.0](https://github.com/nullpub/dux/compare/v5.1.2...v6.0.0) (2019-08-14)
 
 
