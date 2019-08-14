@@ -8,7 +8,7 @@ parent: Modules
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [asyncData (constant)](#asyncdata-constant)
+- [DatumEither (constant)](#DatumEither-constant)
 - [combine (function)](#combine-function)
 - [failure (function)](#failure-function)
 - [fromEither (function)](#fromeither-function)
@@ -24,14 +24,14 @@ parent: Modules
 
 ---
 
-# asyncData (constant)
+# DatumEither (constant)
 
-HKT asyncData
+HKT DatumEither
 
 **Signature**
 
 ```ts
-export const asyncData: Monad2<URI> &
+export const DatumEither: Monad2<URI> &
   Foldable2<URI> &
   Traversable2<URI> &
   Bifunctor2<URI> &
@@ -44,61 +44,61 @@ Added in v5.0.0
 
 # combine (function)
 
-combines AsyncData<_, _>[] into AsyncData<_, _[]>
+combines DatumEither<_, _>[] into DatumEither<_, _[]>
 
 **Signature**
 
 ```ts
-export function combine<A, E>(a: AsyncData<E, A>): AsyncData<E, [A]>;
+export function combine<A, E>(a: DatumEither<E, A>): DatumEither<E, [A]>;
 export function combine<A, B, E>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>
-): AsyncData<E, [A, B]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>
+): DatumEither<E, [A, B]>;
 export function combine<A, B, C, E>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>
-): AsyncData<E, [A, B, C]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>
+): DatumEither<E, [A, B, C]>;
 export function combine<A, B, C, D, E>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>,
-  d: AsyncData<E, D>
-): AsyncData<E, [A, B, C, D]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>,
+  d: DatumEither<E, D>
+): DatumEither<E, [A, B, C, D]>;
 export function combine<A, B, C, D, E, F>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>,
-  d: AsyncData<E, D>,
-  f: AsyncData<E, F>
-): AsyncData<E, [A, B, C, D, F]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>,
+  d: DatumEither<E, D>,
+  f: DatumEither<E, F>
+): DatumEither<E, [A, B, C, D, F]>;
 export function combine<A, B, C, D, E, F, G>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>,
-  d: AsyncData<E, D>,
-  f: AsyncData<E, F>,
-  g: AsyncData<E, G>
-): AsyncData<E, [A, B, C, D, F, G]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>,
+  d: DatumEither<E, D>,
+  f: DatumEither<E, F>,
+  g: DatumEither<E, G>
+): DatumEither<E, [A, B, C, D, F, G]>;
 export function combine<A, B, C, D, E, F, G, H>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>,
-  d: AsyncData<E, D>,
-  f: AsyncData<E, F>,
-  g: AsyncData<E, G>,
-  h: AsyncData<E, H>
-): AsyncData<E, [A, B, C, D, F, G, H]>;
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>,
+  d: DatumEither<E, D>,
+  f: DatumEither<E, F>,
+  g: DatumEither<E, G>,
+  h: DatumEither<E, H>
+): DatumEither<E, [A, B, C, D, F, G, H]>;
 export function combine<A, B, C, D, E, F, G, H, I>(
-  a: AsyncData<E, A>,
-  b: AsyncData<E, B>,
-  c: AsyncData<E, C>,
-  d: AsyncData<E, D>,
-  f: AsyncData<E, F>,
-  g: AsyncData<E, G>,
-  h: AsyncData<E, H>,
-  i: AsyncData<E, I>
-): AsyncData<E, [A, B, C, D, F, G, H, I]>; { ... }
+  a: DatumEither<E, A>,
+  b: DatumEither<E, B>,
+  c: DatumEither<E, C>,
+  d: DatumEither<E, D>,
+  f: DatumEither<E, F>,
+  g: DatumEither<E, G>,
+  h: DatumEither<E, H>,
+  i: DatumEither<E, I>
+): DatumEither<E, [A, B, C, D, F, G, H, I]>; { ... }
 ```
 
 Added in v5.0.0
@@ -110,7 +110,7 @@ Creates AsyncFailure<E, D>
 **Signature**
 
 ```ts
-export const failure = <E, D>(error: E, refreshing = false) => ...
+export const failure = <E, D>(error: E, refreshing = false): DatumEither<E, D> => ...
 ```
 
 Added in v5.0.0
@@ -122,7 +122,7 @@ From fromEither
 **Signature**
 
 ```ts
-export function fromEither<E, D>(either: E.Either<E, D>): AsyncData<E, D> { ... }
+export function fromEither<E, D>(either: E.Either<E, D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -134,7 +134,7 @@ From fromOption
 **Signature**
 
 ```ts
-export function fromOption<E, D>(option: O.Option<D>): AsyncData<E, D> { ... }
+export function fromOption<E, D>(option: O.Option<D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -149,7 +149,7 @@ From fromPredicate
 export function fromPredicate<E, D>(
   predicate: Predicate<D>,
   whenFalse: FunctionN<[D], E>
-): FunctionN<[D], AsyncData<E, D>> { ... }
+): FunctionN<[D], DatumEither<E, D>> { ... }
 ```
 
 Added in v5.0.0
@@ -161,7 +161,7 @@ Creates AsyncInitial<E, D>
 **Signature**
 
 ```ts
-export const initial = <E, D>() => ...
+export const initial = <E, D>(): DatumEither<E, D> => ...
 ```
 
 Added in v5.0.0
@@ -174,7 +174,7 @@ Filters for AsyncFailure<E, D>
 
 ```ts
 export const isFailure = <E, D>(
-  data: AsyncData<E, D>
+  data: DatumEither<E, D>
 ): data is AsyncFailure<E, D> => ...
 ```
 
@@ -188,7 +188,7 @@ Filters for AsyncInitial<E, D>
 
 ```ts
 export const isInitial = <E, D>(
-  data: AsyncData<E, D>
+  data: DatumEither<E, D>
 ): data is AsyncInitial<E, D> => ...
 ```
 
@@ -202,7 +202,7 @@ Filters for AsyncSuccess<E, D>
 
 ```ts
 export const isPending = <E, D>(
-  data: AsyncData<E, D>
+  data: DatumEither<E, D>
 ): data is AsyncPending<E, D> => ...
 ```
 
@@ -216,7 +216,7 @@ Filters for AsyncSuccess<E, D>
 
 ```ts
 export const isSuccess = <E, D>(
-  data: AsyncData<E, D>
+  data: DatumEither<E, D>
 ): data is AsyncSuccess<E, D> => ...
 ```
 
@@ -229,7 +229,7 @@ Creates AsyncPending<E, D>
 **Signature**
 
 ```ts
-export const pending = <E, D>() => ...
+export const pending = <E, D>(): DatumEither<E, D> => ...
 ```
 
 Added in v5.0.0
@@ -241,7 +241,7 @@ Creates AsyncSuccess<E, D>
 **Signature**
 
 ```ts
-export const success = <E, D>(value: D, refreshing = false) => ...
+export const success = <E, D>(value: D, refreshing = false): DatumEither<E, D> => ...
 ```
 
 Added in v5.0.0

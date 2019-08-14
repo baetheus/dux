@@ -8,7 +8,7 @@ parent: Modules
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [AsyncData (type alias)](#asyncdata-type-alias)
+- [DatumEither (type alias)](#DatumEither-type-alias)
 - [URI (type alias)](#uri-type-alias)
 - [AsyncFailure (class)](#asyncfailure-class)
   - [isInitial (method)](#isinitial-method)
@@ -106,26 +106,30 @@ parent: Modules
 
 ---
 
-# AsyncData (type alias)
+# DatumEither (type alias)
 
-AsyncData<E, D> sum type
+DatumEither<E, D> sum type
 
 **Signature**
 
 ```ts
-export type AsyncData<E, D> = AsyncInitial<E, D> | AsyncPending<E, D> | AsyncSuccess<E, D> | AsyncFailure<E, D>
+export type DatumEither<E, D> =
+  | AsyncInitial<E, D>
+  | AsyncPending<E, D>
+  | AsyncSuccess<E, D>
+  | AsyncFailure<E, D>;
 ```
 
 Added in v5.0.0
 
 # URI (type alias)
 
-URI type for AsyncData
+URI type for DatumEither
 
 **Signature**
 
 ```ts
-export type URI = typeof URI
+export type URI = typeof URI;
 ```
 
 Added in v5.0.0
@@ -191,7 +195,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-alt(fy: AsyncData<E, D>): AsyncData<E, D> { ... }
+alt(fy: DatumEither<E, D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -201,7 +205,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-altL(fy: Lazy<AsyncData<E, D>>): AsyncData<E, D> { ... }
+altL(fy: Lazy<DatumEither<E, D>>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -226,7 +230,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> { ... }
+ap<B>(fab: DatumEither<E, FunctionN<[D], B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -236,7 +240,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-chain<B>(_: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> { ... }
+chain<B>(_: FunctionN<[D], DatumEither<E, B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -246,7 +250,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-map<B>(_: FunctionN<[D], B>): AsyncData<E, B> { ... }
+map<B>(_: FunctionN<[D], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -256,7 +260,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-mapLeft<M>(f: FunctionN<[E], M>): AsyncData<M, D> { ... }
+mapLeft<M>(f: FunctionN<[E], M>): DatumEither<M, D> { ... }
 ```
 
 Added in v5.0.0
@@ -266,7 +270,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-bimap<V, B>(f: FunctionN<[E], V>, _: FunctionN<[D], B>): AsyncData<V, B> { ... }
+bimap<V, B>(f: FunctionN<[E], V>, _: FunctionN<[D], B>): DatumEither<V, B> { ... }
 ```
 
 Added in v5.0.0
@@ -286,7 +290,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-extend<B>(_: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> { ... }
+extend<B>(_: FunctionN<[DatumEither<E, D>], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -432,7 +436,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-alt(fy: AsyncData<E, D>): AsyncData<E, D> { ... }
+alt(fy: DatumEither<E, D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -442,7 +446,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-altL(fy: Lazy<AsyncData<E, D>>): AsyncData<E, D> { ... }
+altL(fy: Lazy<DatumEither<E, D>>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -467,7 +471,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> { ... }
+ap<B>(fab: DatumEither<E, FunctionN<[D], B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -477,7 +481,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-chain<B>(f: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> { ... }
+chain<B>(f: FunctionN<[D], DatumEither<E, B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -487,7 +491,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-map<B>(f: FunctionN<[D], B>): AsyncData<E, B> { ... }
+map<B>(f: FunctionN<[D], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -497,7 +501,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-mapLeft<M>(_: FunctionN<[E], M>): AsyncData<M, D> { ... }
+mapLeft<M>(_: FunctionN<[E], M>): DatumEither<M, D> { ... }
 ```
 
 Added in v5.0.0
@@ -507,7 +511,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-bimap<V, B>(_: FunctionN<[E], V>, __: FunctionN<[D], B>): AsyncData<V, B> { ... }
+bimap<V, B>(_: FunctionN<[E], V>, __: FunctionN<[D], B>): DatumEither<V, B> { ... }
 ```
 
 Added in v5.0.0
@@ -527,7 +531,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-extend<B>(f: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> { ... }
+extend<B>(f: FunctionN<[DatumEither<E, D>], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -673,7 +677,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-alt(fy: AsyncData<E, D>): AsyncData<E, D> { ... }
+alt(fy: DatumEither<E, D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -683,7 +687,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-altL(fy: Lazy<AsyncData<E, D>>): AsyncData<E, D> { ... }
+altL(fy: Lazy<DatumEither<E, D>>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -708,7 +712,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> { ... }
+ap<B>(fab: DatumEither<E, FunctionN<[D], B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -718,7 +722,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-chain<B>(f: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> { ... }
+chain<B>(f: FunctionN<[D], DatumEither<E, B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -728,7 +732,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-map<B>(f: FunctionN<[D], B>): AsyncData<E, B> { ... }
+map<B>(f: FunctionN<[D], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -738,7 +742,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-mapLeft<M>(_: FunctionN<[E], M>): AsyncData<M, D> { ... }
+mapLeft<M>(_: FunctionN<[E], M>): DatumEither<M, D> { ... }
 ```
 
 Added in v5.0.0
@@ -748,7 +752,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-bimap<V, B>(_: FunctionN<[E], V>, __: FunctionN<[D], B>): AsyncData<V, B> { ... }
+bimap<V, B>(_: FunctionN<[E], V>, __: FunctionN<[D], B>): DatumEither<V, B> { ... }
 ```
 
 Added in v5.0.0
@@ -768,7 +772,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-extend<B>(f: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> { ... }
+extend<B>(f: FunctionN<[DatumEither<E, D>], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -914,7 +918,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-alt(_: AsyncData<E, D>): AsyncData<E, D> { ... }
+alt(_: DatumEither<E, D>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -924,7 +928,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-altL(_: Lazy<AsyncData<E, D>>): AsyncData<E, D> { ... }
+altL(_: Lazy<DatumEither<E, D>>): DatumEither<E, D> { ... }
 ```
 
 Added in v5.0.0
@@ -949,7 +953,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-ap<B>(fab: AsyncData<E, FunctionN<[D], B>>): AsyncData<E, B> { ... }
+ap<B>(fab: DatumEither<E, FunctionN<[D], B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -959,7 +963,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-chain<B>(f: FunctionN<[D], AsyncData<E, B>>): AsyncData<E, B> { ... }
+chain<B>(f: FunctionN<[D], DatumEither<E, B>>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -969,7 +973,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-map<B>(f: FunctionN<[D], B>): AsyncData<E, B> { ... }
+map<B>(f: FunctionN<[D], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -979,7 +983,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-mapLeft<M>(_: FunctionN<[E], M>): AsyncData<M, D> { ... }
+mapLeft<M>(_: FunctionN<[E], M>): DatumEither<M, D> { ... }
 ```
 
 Added in v5.0.0
@@ -989,7 +993,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-bimap<V, B>(_: (e: E) => V, g: (d: D) => B): AsyncData<V, B> { ... }
+bimap<V, B>(_: (e: E) => V, g: (d: D) => B): DatumEither<V, B> { ... }
 ```
 
 Added in v5.0.0
@@ -1009,7 +1013,7 @@ Added in v5.0.0
 **Signature**
 
 ```ts
-extend<B>(f: FunctionN<[AsyncData<E, D>], B>): AsyncData<E, B> { ... }
+extend<B>(f: FunctionN<[DatumEither<E, D>], B>): DatumEither<E, B> { ... }
 ```
 
 Added in v5.0.0
@@ -1096,12 +1100,12 @@ Added in v5.0.0
 
 # URI (constant)
 
-URI const for AsyncData
+URI const for DatumEither
 
 **Signature**
 
 ```ts
-export const URI: "AsyncData" = ...
+export const URI: "DatumEither" = ...
 ```
 
 Added in v5.0.0

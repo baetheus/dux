@@ -32,13 +32,18 @@
     "url": "https://github.com/nullpub/dux/issues"
   },
   "homepage": "https://github.com/nullpub/dux#readme",
-  "dependencies": {
-    "fp-ts": "^2",
-    "monocle-ts": "^2",
-    "rxjs": "^6"
+  "peerDependencies": {
+    "@nll/datum": "^2.2.1",
+    "fp-ts": "^2.0.5",
+    "monocle-ts": "^2.0.0",
+    "rxjs": "^6.5.2"
   },
   "devDependencies": {
+    "@nll/datum": "^2.2.1",
     "docs-ts": "^0.2.0",
+    "fp-ts": "^2.0.5",
+    "monocle-ts": "^2.0.0",
+    "rxjs": "^6.5.2",
     "standard-version": "^5.0.0",
     "typescript": "^3.3.3333"
   }
