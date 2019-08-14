@@ -1,6 +1,7 @@
 # Build artifacts
 .rpt2_cache
-dist
+lib
+es6
 
 # Dependencies
 node_modules

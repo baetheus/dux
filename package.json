@@ -2,15 +2,16 @@
   "name": "@nll/dux",
   "version": "6.0.0",
   "description": "Flux and flux-like tools",
-  "main": "dist/es5/index.js",
-  "module": "dist/es6/index.js",
+  "main": "lib/index.js",
+  "module": "es6/index.js",
   "files": [
-    "dist"
+    "lib",
+    "es6"
   ],
   "scripts": {
-    "build": "npm run build-es6 && npm run build-es5",
+    "build": "npm run build-es6 && npm run build-lib",
     "build-es6": "tsc",
-    "build-es5": "tsc --build tsconfig.es5.json",
+    "build-lib": "tsc --build tsconfig.lib.json",
     "watch": "tsc --watch",
     "test": "tsc --noEmit",
     "prepublishOnly": "npm run build",

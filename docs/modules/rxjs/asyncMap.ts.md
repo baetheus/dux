@@ -1,6 +1,6 @@
 ---
 title: rxjs/asyncMap.ts
-nav_order: 13
+nav_order: 10
 parent: Modules
 ---
 

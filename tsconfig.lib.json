@@ -13,8 +13,8 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": true,
-    "declarationDir": "./dist/es5",
-    "outDir": "./dist/es5",
+    "declarationDir": "./lib",
+    "outDir": "./lib",
     "lib": ["es2015"]
   },
   "include": ["src/**/*"],
