@@ -1,6 +1,6 @@
 {
   "name": "@nll/dux",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "Flux and flux-like tools",
   "main": "lib/index.js",
   "module": "es6/index.js",
