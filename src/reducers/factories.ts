@@ -1,5 +1,5 @@
-import { initial } from '@nll/datum/es6/Datum';
-import { DatumEither, failure, success, toRefresh } from '@nll/datum/es6/DatumEither';
+import { initial } from '@nll/datum/lib/Datum';
+import { DatumEither, failure, success, toRefresh } from '@nll/datum/lib/DatumEither';
 import { Lens } from 'monocle-ts';
 
 import { AsyncActionCreators, Failure, Meta, Success } from '../actions';
