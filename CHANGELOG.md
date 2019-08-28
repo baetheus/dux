@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.1](https://github.com/nullpub/dux/compare/v6.0.2...v7.0.1) (2019-08-28)
+
+
+### Features
+
+* restructure library and implement full test coverage ([0aae50f](https://github.com/nullpub/dux/commit/0aae50f))
+
+
+### BREAKING CHANGES
+
+* all import paths have changed
+
+
+
 # [7.0.0](https://github.com/nullpub/dux/compare/v6.0.2...v7.0.0) (2019-08-28)
 
 
