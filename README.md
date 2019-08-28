@@ -1,5 +1,5 @@
 <p align="center">
-  A functional toolkit for reducing boilerplate for Redux, Flux, Ngrx, and similar state management libraries.
+  A type safe functional toolkit for reducing boilerplate for Redux, Flux, Ngrx, and similar state management libraries.
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 # @nll/dux
 
-Flux and flux-like utilities
+Flux and flux-like utilities, written in typescript with the twin goals of type safety and massive boilerplate reduction
 
 ## Installation
 
@@ -42,6 +42,15 @@ If you plan on using everything here is the copypasta
 ```bash
 npm i @nll/dux @nll/datum monocle-ts fp-ts
 ```
+
+## Documentation
+
+- [Action Factories](https://nullpub.github.io/dux/modules/Actions.ts.html)
+- [Reducer Factories](https://nullpub.github.io/dux/modules/Reducers.ts.html)
+- [Effects Factories](https://nullpub.github.io/dux/modules/Effects.ts.html)
+- [Rxjs AsyncMap Action Operators](https://nullpub.github.io/dux/modules/AsyncMap.ts.html)
+- [Rxjs Filter Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
+- [Rxjs Map Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
 
 ## Usage
 
@@ -333,11 +342,9 @@ assert.deepStrictEqual(
 );
 ```
 
-## Documentation
+At this point let's list what we've achieved:
 
-- [Action Factories](https://nullpub.github.io/dux/modules/Actions.ts.html)
-- [Reducer Factories](https://nullpub.github.io/dux/modules/Reducers.ts.html)
-- [Effects Factories](https://nullpub.github.io/dux/modules/Effects.ts.html)
-- [Rxjs AsyncMap Action Operators](https://nullpub.github.io/dux/modules/AsyncMap.ts.html)
-- [Rxjs Filter Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
-- [Rxjs Map Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
+1. Created a type-safe set of actions for pending, failure, and success states of an api call.
+2. Created a reducer that manages a collection of api responses by key, with their associated pending states.
+
+This is all done in `10 lines of code`. Of course, this doesn't include the actual api call, for that we'll need to look at Effects (soon).
