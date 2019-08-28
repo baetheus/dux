@@ -167,6 +167,172 @@ assert.deepStrictEqual(asyncIncrement.pending(1), {
 });
 ```
 
+### Reducers
+
+What are actions without reducers? @nll/dux includes a very similar set of reducer functions similar to [typescript-fsa-reducers](https://github.com/dphilipson/typescript-fsa-reducers). The initial design for these reducers came from Patrick Martin in [rx-fsa](https://github.com/patrimart/rx-fsa).
+
+The core idea behind @nll/dux reducers is that reducers are composable, so there is no point in building large switch case blocks. We already have the type guards in the action match function, so why not utilize those to isolate individual reducers.
+
+A `caseFn` is itself a very simple reducer:
+
+```typescript
+import { actionCreator } from '@nll/dux/lib/Actions';
+import { caseFn } from '@nll/dux/lib/Reducers';
+import * as assert from 'assert';
+
+type State = {
+  counter: number;
+};
+
+const increment = actionCreator<number>('INCREMENT');
+
+const incrementCaseFn = caseFn(increment, (state: State, payload) => ({
+  ...state,
+  counter: state.counter + payload,
+}));
+
+assert.deepStrictEqual(incrementCaseFn({ counter: 0 }, increment(1)), {
+  counter: 1,
+});
+```
+
+We can build up a collection of case functions and compose them using the reducerFn combinator:
+
+```typescript
+import { actionCreator } from '@nll/dux/lib/Actions';
+import { caseFn, reducerFn } from '@nll/dux/lib/Reducers';
+import * as assert from 'assert';
+
+type State = {
+  counter: number;
+};
+
+const increment = actionCreator<number>('INCREMENT');
+const resetCounter = actionCreator('RESET');
+
+const addOne = increment(1);
+const subtractOne = increment(-1);
+
+const reset = resetCounter(undefined);
+
+const counterReducer = reducerFn(
+  caseFn(increment, (state: State, payload) => ({
+    ...state,
+    counter: state.counter + payload,
+  })),
+  caseFn(resetCounter, state => ({ ...state, counter: 0 }))
+);
+
+assert.deepStrictEqual(counterReducer({ counter: 0 }, addOne), { counter: 1 });
+assert.deepStrictEqual(counterReducer({ counter: 0 }, subtractOne), {
+  counter: -1,
+});
+assert.deepStrictEqual(counterReducer({ counter: 100 }, reset), { counter: 0 });
+```
+
+Since a standard pattern is to set a store to undefined to clear it, there is also a `reducerDefaultFn` that does the same as `reducerFn` but will pass a default state when undefined or null is passed as the current state.
+
+```typescript
+import { actionCreator } from '@nll/dux/lib/Actions';
+import { caseFn, reducerDefaultFn } from '@nll/dux/lib/Reducers';
+import * as assert from 'assert';
+
+type State = {
+  counter: number;
+};
+
+const INITIAL_STATE: State = {
+  counter: 0,
+};
+
+const increment = actionCreator<number>('INCREMENT');
+
+const counterReducer = reducerDefaultFn(
+  INITIAL_STATE,
+  caseFn(increment, (state, payload) => ({
+    ...state,
+    counter: state.counter + payload,
+  }))
+);
+
+assert.deepStrictEqual(counterReducer(undefined, increment(1)), { counter: 1 });
+```
+
+There is are also factories for automatically rigging up asynchronous actions with a slice of store. The `asyncReducerFactory` pattern utilizes Lenses from [monocle-ts](https://github.com/gcanti/monocle-ts) as well as the DatumEither adt from [@nll/datum](https://github.com/nullpub/datum), so further reading may be necessary to truly grok the power of this factory function.
+
+```typescript
+import { pending } from '@nll/datum/lib/Datum';
+import { DatumEither, initial, success } from '@nll/datum/lib/DatumEither';
+import { asyncActionCreators } from '@nll/dux/lib/Actions';
+import { asyncReducerFactory } from '@nll/dux/lib/Reducers';
+import * as assert from 'assert';
+import { Lens } from 'monocle-ts';
+
+type State = {
+  apiData: DatumEither<string, number>;
+};
+
+const INITIAL_STATE: State = {
+  apiData: initial,
+};
+
+const getApiData = asyncActionCreators<number, number, string>('GET_API_DATA');
+
+const apiDataLens = Lens.fromProp<State>()('apiData');
+
+const apiDataReducer = asyncReducerFactory(getApiData, apiDataLens);
+
+assert.deepStrictEqual(apiDataReducer(INITIAL_STATE, getApiData.pending(1)), {
+  apiData: pending,
+});
+assert.deepStrictEqual(
+  apiDataReducer(INITIAL_STATE, getApiData.success({ params: 1, result: 20 })),
+  {
+    apiData: success(20),
+  }
+);
+```
+
+Last is the `asyncEntitiesReducer` which does the same as `asyncReducerFactory` but for a collection of data.
+
+```typescript
+import { pending } from '@nll/datum/lib/Datum';
+import { DatumEither, initial, success } from '@nll/datum/lib/DatumEither';
+import { asyncActionCreators } from '@nll/dux/lib/Actions';
+import { asyncEntityReducer } from '@nll/dux/lib/Reducers';
+import * as assert from 'assert';
+import { Lens } from 'monocle-ts';
+
+type State = {
+  apiDatas: Record<string, DatumEither<string, number>>;
+};
+
+const INITIAL_STATE: State = {
+  apiDatas: {},
+};
+
+const getApiData = asyncActionCreators<number, number, string>('GET_API_DATA');
+
+const apiDataLens = Lens.fromProp<State>()('apiDatas');
+const idLens = new Lens((s: number) => s.toString(), a => s => parseInt(a, 10));
+
+const apiDataReducer = asyncEntityReducer(getApiData, apiDataLens, idLens);
+
+assert.deepStrictEqual(apiDataReducer(INITIAL_STATE, getApiData.pending(1)), {
+  apiDatas: {
+    '1': pending,
+  },
+});
+assert.deepStrictEqual(
+  apiDataReducer(INITIAL_STATE, getApiData.success({ params: 1, result: 20 })),
+  {
+    apiDatas: {
+      '1': success(20),
+    },
+  }
+);
+```
+
 ## Documentation
 
 - [Action Factories](https://nullpub.github.io/dux/modules/Actions.ts.html)
