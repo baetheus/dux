@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.2](https://github.com/nullpub/dux/compare/v7.0.1...v7.0.2) (2019-08-28)
+
+
+### Bug Fixes
+
+* Effects.ts referenced wrong case ./AsyncMap as ./asyncMap ([b16abe7](https://github.com/nullpub/dux/commit/b16abe7))
+
+
+
 ## [7.0.1](https://github.com/nullpub/dux/compare/v6.0.2...v7.0.1) (2019-08-28)
 
 
