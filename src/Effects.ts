@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 import { AsyncActionCreators, Meta } from './Actions';
-import { asyncConcatMap, asyncExhaustMap, asyncMergeMap, asyncSwitchMap } from './asyncMap';
+import { asyncConcatMap, asyncExhaustMap, asyncMergeMap, asyncSwitchMap } from './AsyncMap';
 
 /**
  * Generates asyncMap factories from an action
