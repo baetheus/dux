@@ -10,8 +10,8 @@
   <a href="https://david-dm.org/nullpub/dux">
     <img src="https://img.shields.io/david/nullpub/dux.svg" alt="dependency status" height="20">
   </a>
-  <a href="https://www.npmjs.com/package/@nll/datum">
-    <img src="https://img.shields.io/npm/dm/@nll/datum.svg" alt="npm downloads" height="20">
+  <a href="https://www.npmjs.com/package/@nll/dux">
+    <img src="https://img.shields.io/npm/dm/@nll/dux.svg" alt="npm downloads" height="20">
   </a>
 </p>
 
