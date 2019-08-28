@@ -1,7 +1,13 @@
-# Build artifacts
+# build
 .rpt2_cache
 lib
 es6
 
-# Dependencies
+# deps
 node_modules
+
+# ide
+.vscode
+
+# tests
+coverage
