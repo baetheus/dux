@@ -20,8 +20,10 @@ parent: Modules
 - [asyncReducersFactory (function)](#asyncreducersfactory-function)
 - [caseFn (function)](#casefn-function)
 - [casesFn (function)](#casesfn-function)
+- [filterReducer (function)](#filterreducer-function)
 - [reducerDefaultFn (function)](#reducerdefaultfn-function)
 - [reducerFn (function)](#reducerfn-function)
+- [splitType (function)](#splittype-function)
 
 ---
 
@@ -502,6 +504,21 @@ export const casesFn: CasesFn = <S>(
 
 Added in v5.0.0
 
+# filterReducer (function)
+
+Filters actions by first section of action type to bypass sections of the store
+
+**Signature**
+
+```ts
+export const filterReducer = <S, P, M>(
+  groupName: string,
+  reducer: ActionReducer<S, P, M>
+): ActionReducer<S, P, M> => (state: S, action: Action<P, M>): S => ...
+```
+
+Added in v7.1.0
+
 # reducerDefaultFn (function)
 
 Compose caseFn and casesFn with initial state.
@@ -532,3 +549,17 @@ export const reducerFn: ReducerFn = <S>(
 ```
 
 Added in v5.0.0
+
+# splitType (function)
+
+Splits a TypedAction into a non-empty array of its component types
+
+_Note_: String.split() always returns a non-empty array
+
+**Signature**
+
+```ts
+export const splitType = (action: TypedAction): string[] & [string] => ...
+```
+
+Added in v7.1.0
