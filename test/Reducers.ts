@@ -158,4 +158,31 @@ describe('Reducers', () => {
       reducers.entityReducer(entityLens, entityIdLens);
     });
   });
+
+  it('splitType', () => {
+    assert.deepStrictEqual(R.splitType({ type: '' }), ['']);
+    assert.deepStrictEqual(R.splitType({ type: 'ACTION' }), ['ACTION']);
+    assert.deepStrictEqual(R.splitType({ type: 'GROUP/ACTION' }), [
+      'GROUP',
+      'ACTION',
+    ]);
+  });
+
+  it('filterReducer', () => {
+    const group1 = A.actionCreatorFactory('GROUP_1');
+    const group2 = A.actionCreatorFactory('GROUP_2');
+
+    const action1 = group1.simple<number>('ACTION');
+    const action2 = group2.simple<number>('ACTION');
+    const emptyAction = A.actionCreator<number>('');
+
+    const handler = (s: number, p: number) => p;
+    const casesFn = R.casesFn([action1, action2], handler);
+
+    const filterGroup1 = R.filterReducer('GROUP_1', casesFn);
+
+    assert.deepStrictEqual(filterGroup1(0, action1(1)), 1);
+    assert.deepStrictEqual(filterGroup1(0, action2(1)), 0);
+    assert.deepStrictEqual(filterGroup1(0, emptyAction(1)), 0);
+  });
 });

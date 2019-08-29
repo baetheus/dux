@@ -1,7 +1,7 @@
 import { DatumEither, failure, initial, success, toRefresh } from '@nll/datum/lib/DatumEither';
 import { Lens } from 'monocle-ts';
 
-import { Action, ActionCreator, AsyncActionCreators, Failure, Meta, Success } from './Actions';
+import { Action, ActionCreator, AsyncActionCreators, Failure, Meta, Success, TypedAction } from './Actions';
 
 /**
  * Reducer Interface
@@ -702,3 +702,24 @@ export const asyncReducersFactory = <
     toId: Lens<P, string>
   ) => asyncEntityReducer(action, lens, toId),
 });
+
+/**
+ * Splits a TypedAction into a non-empty array of its component types
+ *
+ * *Note*: String.split() always returns a non-empty array
+ *
+ * @since 7.1.0
+ */
+export const splitType = (action: TypedAction): string[] & [string] =>
+  action.type.split('/') as string[] & [string];
+
+/**
+ * Filters actions by first section of action type to bypass sections of the store
+ *
+ * @since 7.1.0
+ */
+export const filterReducer = <S, P, M>(
+  groupName: string,
+  reducer: ActionReducer<S, P, M>
+): ActionReducer<S, P, M> => (state: S, action: Action<P, M>): S =>
+  splitType(action)[0] === groupName ? reducer(state, action) : state;
