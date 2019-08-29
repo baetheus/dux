@@ -6,12 +6,23 @@
   <a href="https://travis-ci.org/nullpub/dux">
     <img src="https://img.shields.io/travis/nullpub/dux/master.svg" alt="build status" height="20">
   </a>
-  <a href='https://coveralls.io/github/nullpub/dux?branch=master'><img src='https://coveralls.io/repos/github/nullpub/dux/badge.svg?branch=master' alt='Coverage Status' height="20"/></a>
-  <a href="https://david-dm.org/nullpub/dux">
-    <img src="https://img.shields.io/david/nullpub/dux.svg" alt="dependency status" height="20">
+  <a href='https://coveralls.io/github/nullpub/dux?branch=master'>
+    <img src='https://coveralls.io/repos/github/nullpub/dux/badge.svg?branch=master' alt='Coverage Status' height="20"/>
   </a>
   <a href="https://www.npmjs.com/package/@nll/dux">
     <img src="https://img.shields.io/npm/dm/@nll/dux.svg" alt="npm downloads" height="20">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://david-dm.org/nullpub/dux">
+    <img src="https://img.shields.io/david/nullpub/dux.svg" alt="dependency status" height="20">
+  </a>
+  <a href="https://david-dm.org/nullpub/dux?type=dev">
+    <img src="https://img.shields.io/david/dev/nullpub/dux.svg" alt="dev dependency status" height="20">
+  </a>
+  <a href="https://david-dm.org/nullpub/dux?type=peer">
+    <img src="https://img.shields.io/david/peer/nullpub/dux.svg" alt="peer dependency status" height="20">
   </a>
 </p>
 
