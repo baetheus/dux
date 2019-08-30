@@ -42,7 +42,7 @@ To use async reducer factories you'll also need [monocle-ts](https://github.com/
 npm i monocle-ts fp-ts @nll/datum
 ```
 
-To use some of the rxjs operators you'll need rxjs
+To use some of the rxjs operators you'll need [rxjs](https://github.com/ReactiveX/rxjs)
 
 ```bash
 npm i rxjs
@@ -51,7 +51,7 @@ npm i rxjs
 If you plan on using everything here is the copypasta
 
 ```bash
-npm i @nll/dux @nll/datum monocle-ts fp-ts
+npm i @nll/dux @nll/datum monocle-ts fp-ts rxjs
 ```
 
 ## Documentation
