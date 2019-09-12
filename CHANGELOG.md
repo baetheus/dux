@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.1](https://github.com/nullpub/dux/compare/v7.1.0...v7.1.1) (2019-09-12)
+
+
+### Bug Fixes
+
+* add src to package.json files for source map resolution ([fd54929](https://github.com/nullpub/dux/commit/fd54929))
+
 ## [7.1.0](https://github.com/nullpub/dux/compare/v7.0.3...v7.1.0) (2019-08-29)
 
 
