@@ -6,7 +6,8 @@
   "module": "es6/index.js",
   "files": [
     "lib",
-    "es6"
+    "es6",
+    "src"
   ],
   "scripts": {
     "build-es6": "tsc",
@@ -36,13 +37,13 @@
   },
   "homepage": "https://github.com/nullpub/dux#readme",
   "peerDependencies": {
-    "@nll/datum": "^2.6.0",
+    "@nll/datum": "^2.6.2",
     "fp-ts": "^2.0.5",
     "monocle-ts": "^2.0.0",
-    "rxjs": "^6.5.2"
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
-    "@nll/datum": "^2.6.0",
+    "@nll/datum": "^2.6.2",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "coveralls": "^3.0.6",
@@ -50,7 +51,7 @@
     "fp-ts": "^2.0.5",
     "jest": "^24.9.0",
     "monocle-ts": "^2.0.0",
-    "rxjs": "^6.5.2",
+    "rxjs": "^6.5.3",
     "standard-version": "^7.0.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.3.3333"
