@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.2](https://github.com/nullpub/dux/compare/v7.1.1...v7.1.2) (2019-09-12)
+
+
+### Bug Fixes
+
+* build error resulting from package.json and lockfile mismatch ([4e968d5](https://github.com/nullpub/dux/commit/4e968d5))
+
 ### [7.1.1](https://github.com/nullpub/dux/compare/v7.1.0...v7.1.1) (2019-09-12)
 
 
