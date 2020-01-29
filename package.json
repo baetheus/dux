@@ -51,6 +51,7 @@
     "fp-ts": "^2.4.3",
     "jest": "^25.1.0",
     "monocle-ts": "^2.0.1",
+    "prettier": "^1.19.1",
     "rxjs": "^6.5.4",
     "standard-version": "^7.1.0",
     "ts-jest": "^25.0.0",

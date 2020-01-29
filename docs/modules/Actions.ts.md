@@ -4,6 +4,12 @@ nav_order: 1
 parent: Modules
 ---
 
+# Actions overview
+
+Added in v5.0.0
+
+Actions types and action factories
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>

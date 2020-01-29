@@ -1,8 +1,14 @@
 ---
 title: MapAction.ts
-nav_order: 5
+nav_order: 4
 parent: Modules
 ---
+
+# MapAction overview
+
+Added in v5.0.0
+
+Pipeable observable operators for mapping
 
 ---
 

@@ -4,6 +4,12 @@ nav_order: 2
 parent: Modules
 ---
 
+# AsyncMap overview
+
+Added in v5.0.0
+
+Async map factories for async actions
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>

@@ -1,8 +1,14 @@
 ---
 title: FilterActions.ts
-nav_order: 4
+nav_order: 3
 parent: Modules
 ---
+
+# FilterActions overview
+
+Added in v5.0.0
+
+Pipeable observable operators for filtering
 
 ---
 

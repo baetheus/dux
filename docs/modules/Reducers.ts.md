@@ -1,8 +1,14 @@
 ---
 title: Reducers.ts
-nav_order: 6
+nav_order: 5
 parent: Modules
 ---
+
+# Reducers overview
+
+Added in v5.0.0
+
+Reducer types and reducer factories
 
 ---
 
