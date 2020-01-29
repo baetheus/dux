@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.3](https://github.com/nullpub/dux/compare/v7.1.2...v7.1.3) (2020-01-29)
+
+
+### Bug Fixes
+
+* added docs tags for new docs version ([9038514](https://github.com/nullpub/dux/commit/9038514f174aed699ea3dedd89bb20f122ed51b3))
+* added prettier dev dependency for docs ([0d0d545](https://github.com/nullpub/dux/commit/0d0d5453e4976e67db486d6993d4f74935d5d60b))
+
 ### [7.1.2](https://github.com/nullpub/dux/compare/v7.1.1...v7.1.2) (2019-09-12)
 
 
