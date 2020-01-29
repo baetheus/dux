@@ -1,7 +1,27 @@
-import { DatumEither, failure, initial, success, toRefresh } from '@nll/datum/lib/DatumEither';
-import { Lens } from 'monocle-ts';
+/**
+ * @since 5.0.0
+ *
+ * Reducer types and reducer factories
+ */
 
-import { Action, ActionCreator, AsyncActionCreators, Failure, Meta, Success, TypedAction } from './Actions';
+import {
+  DatumEither,
+  failure,
+  initial,
+  success,
+  toRefresh
+} from "@nll/datum/lib/DatumEither";
+import { Lens } from "monocle-ts";
+
+import {
+  Action,
+  ActionCreator,
+  AsyncActionCreators,
+  Failure,
+  Meta,
+  Success,
+  TypedAction
+} from "./Actions";
 
 /**
  * Reducer Interface
@@ -700,7 +720,7 @@ export const asyncReducersFactory = <
   entityReducer: <S>(
     lens: Lens<S, Record<string, DatumEither<E, R>>>,
     toId: Lens<P, string>
-  ) => asyncEntityReducer(action, lens, toId),
+  ) => asyncEntityReducer(action, lens, toId)
 });
 
 /**
@@ -711,7 +731,7 @@ export const asyncReducersFactory = <
  * @since 7.1.0
  */
 export const splitType = (action: TypedAction): string[] & [string] =>
-  action.type.split('/') as string[] & [string];
+  action.type.split("/") as string[] & [string];
 
 /**
  * Filters actions by first section of action type to bypass sections of the store

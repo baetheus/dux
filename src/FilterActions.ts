@@ -1,7 +1,13 @@
-import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+/**
+ * @since 5.0.0
+ *
+ * Pipeable observable operators for filtering
+ */
 
-import { Action, ActionCreator, Meta } from './Actions';
+import { Observable } from "rxjs";
+import { filter } from "rxjs/operators";
+
+import { Action, ActionCreator, Meta } from "./Actions";
 
 /**
  * RxJS operator to filter acitons by multiple `ActionCreator`s.

@@ -1,4 +1,10 @@
 /**
+ * @since 5.0.0
+ *
+ * Actions types and action factories
+ */
+
+/**
  * Interface for metadata.
  *
  * @since 5.0.0
@@ -130,17 +136,17 @@ export type ActionCreatorFactory = <M extends Meta = Meta>(
  * @since 7.0.0
  */
 export const collapseType = (...types: string[]) =>
-  types.length > 0 ? types.join('/') : 'UNKNOWN_TYPE';
+  types.length > 0 ? types.join("/") : "UNKNOWN_TYPE";
 
 /**
  * Action Combinators
  */
 const matcherFactory = <P, M>(type: string): ActionMatcher<P, M> => ({
-  match: (action: TypedAction): action is Action<P, M> => action.type === type,
+  match: (action: TypedAction): action is Action<P, M> => action.type === type
 });
 
 const typeFactory = (...types: string[]): TypedAction => ({
-  type: collapseType(...types),
+  type: collapseType(...types)
 });
 
 /**
@@ -155,7 +161,7 @@ export const actionFactory = <P, M extends Meta = Meta>(
     type,
     error,
     meta: { ...commonMeta, ...meta },
-    payload,
+    payload
   })) as ActionFunction<P, M>;
 
 /**
@@ -183,16 +189,16 @@ export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
   group: string,
   commonMeta?: M
 ): AsyncActionCreators<P, R, E, M> => ({
-  pending: actionCreator<P, M>(collapseType(group, 'PENDING'), commonMeta),
+  pending: actionCreator<P, M>(collapseType(group, "PENDING"), commonMeta),
   failure: actionCreator<Failure<P, E>, M>(
-    collapseType(group, 'FAILURE'),
+    collapseType(group, "FAILURE"),
     commonMeta,
     true
   ),
   success: actionCreator<Success<P, R>, M>(
-    collapseType(group, 'SUCCESS'),
+    collapseType(group, "SUCCESS"),
     commonMeta
-  ),
+  )
 });
 
 /**
@@ -223,6 +229,6 @@ export const actionCreatorFactory = <M extends Meta = Meta>(
 
   return {
     simple,
-    async,
+    async
   };
 };

@@ -1,12 +1,27 @@
-import { Observable } from 'rxjs';
+/**
+ * @since 5.0.0
+ *
+ * Grouped async action maps
+ *
+ * @deprecated
+ */
 
-import { AsyncActionCreators, Meta } from './Actions';
-import { asyncConcatMap, asyncExhaustMap, asyncMergeMap, asyncSwitchMap } from './AsyncMap';
+import { Observable } from "rxjs";
+
+import { AsyncActionCreators, Meta } from "./Actions";
+import {
+  asyncConcatMap,
+  asyncExhaustMap,
+  asyncMergeMap,
+  asyncSwitchMap
+} from "./AsyncMap";
 
 /**
  * Generates asyncMap factories from an action
  *
  * @since 5.1.0
+ *
+ * @deprecated
  */
 export const effectsFactory = <
   P = void,
@@ -20,5 +35,5 @@ export const effectsFactory = <
   asyncConcatMap: asyncConcatMap(action, project),
   asyncExhaustMap: asyncExhaustMap(action, project),
   asyncMergeMap: asyncMergeMap(action, project),
-  asyncSwitchMap: asyncSwitchMap(action, project),
+  asyncSwitchMap: asyncSwitchMap(action, project)
 });

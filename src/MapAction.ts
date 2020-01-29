@@ -1,7 +1,13 @@
-import { from, Observable, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+/**
+ * @since 5.0.0
+ *
+ * Pipeable observable operators for mapping
+ */
 
-import { Action, ActionCreator, Meta } from './Actions';
+import { from, Observable, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+
+import { Action, ActionCreator, Meta } from "./Actions";
 
 /**
  * Filters on an action and a projection, and merges the output

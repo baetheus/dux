@@ -1,7 +1,21 @@
-import { Observable, of } from 'rxjs';
-import { catchError, concatMap, exhaustMap, filter, map, mergeMap, switchMap } from 'rxjs/operators';
+/**
+ * @since 5.0.0
+ *
+ * Async map factories for async actions
+ */
 
-import { AsyncActionCreators, Meta, TypedAction } from './Actions';
+import { Observable, of } from "rxjs";
+import {
+  catchError,
+  concatMap,
+  exhaustMap,
+  filter,
+  map,
+  mergeMap,
+  switchMap
+} from "rxjs/operators";
+
+import { AsyncActionCreators, Meta, TypedAction } from "./Actions";
 
 /**
  * Takes a lettable map operator and creates asyncMap operator
