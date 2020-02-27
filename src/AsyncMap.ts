@@ -28,7 +28,7 @@ const asyncMapFactory = (mapper: typeof mergeMap) => <P, R, E, M extends Meta>(
 ) => (obs: Observable<TypedAction>) =>
   obs.pipe(
     filter(action.pending.match),
-    mapper(({ payload: params, meta }) =>
+    mapper(({ value: params, meta }) =>
       project(params, meta).pipe(
         map(result => action.success({ params, result }, meta)),
         catchError(error => of(action.failure({ params, error }, meta)))

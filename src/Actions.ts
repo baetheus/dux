@@ -5,20 +5,30 @@
  */
 
 /**
+ * The bare minimum interface for actions in the dux system.
+ * If your existing store doesn't have actions with a type parameter
+ * that you can switch on then dux won't work (at least with typescript).
+ *
+ * @since 5.0.0
+ */
+export interface TypedAction {
+  readonly type: string;
+}
+
+/**
  * Interface for metadata.
  *
  * @since 5.0.0
  */
-export type Meta = Readonly<object> & { readonly [key: string]: any };
+export type Meta = Readonly<{ [key: string]: any }>;
 
 /**
  * Interface for FSA Action.
  *
  * @since 5.0.0
  */
-export interface Action<P, M extends Meta = Meta> {
-  readonly type: string;
-  readonly payload: P;
+export interface Action<P, M extends Meta = Meta> extends TypedAction {
+  readonly value: P;
   readonly meta: M;
   readonly error: boolean;
 }
@@ -44,29 +54,11 @@ export interface Failure<P, E> {
 }
 
 /**
- * Interface for result actions
- *
- * @since 5.0.0
- */
-export type ResultAction<P, R, E, M extends Meta> =
-  | Action<Success<P, R>, M>
-  | Action<Failure<P, E>, M>;
-
-/**
- * Interface for an action type
- *
- * @since 5.0.0
- */
-export interface TypedAction {
-  readonly type: string;
-}
-
-/**
  * Interface for action matcher property
  *
  * @since 5.0.0
  */
-export type ActionMatcher<P, M> = {
+type ActionMatcher<P, M> = {
   readonly match: (action: TypedAction) => action is Action<P, M>;
 };
 
@@ -75,8 +67,8 @@ export type ActionMatcher<P, M> = {
  *
  * @since 5.0.0
  */
-export type ActionFunction<P = void, M extends Meta = Meta> = P extends void
-  ? (payload?: P, meta?: M) => Action<P, M>
+type ActionFunction<P = unknown, M extends Meta = Meta> = P extends unknown
+  ? (payload?: unknown, meta?: M) => Action<P, M>
   : (payload: P, meta?: M) => Action<P, M>;
 
 /**
@@ -84,9 +76,16 @@ export type ActionFunction<P = void, M extends Meta = Meta> = P extends void
  *
  * @since 5.0.0
  */
-export type ActionCreator<P = void, M extends Meta = Meta> = TypedAction &
+export type ActionCreator<P = unknown, M extends Meta = Meta> = TypedAction &
   ActionMatcher<P, M> &
   ActionFunction<P, M>;
+
+/**
+ * Helper type to make variadic extraction easier
+ */
+export type ExtractAction<T> = T extends ActionCreator<infer P, infer M>[]
+  ? Action<P, M>
+  : Action<unknown, Meta>;
 
 /**
  * Interface for async action creator
@@ -94,9 +93,9 @@ export type ActionCreator<P = void, M extends Meta = Meta> = TypedAction &
  * @since 5.0.0
  */
 export interface AsyncActionCreators<
-  P = void,
-  R = void,
-  E = void,
+  P = unknown,
+  R = unknown,
+  E = unknown,
   M extends Meta = Meta
 > {
   readonly pending: ActionCreator<P, M>;
@@ -109,38 +108,22 @@ export interface AsyncActionCreators<
  *
  * @since 5.0.0
  */
-export type ActionCreatorBundle<M extends Meta = Meta> = {
-  simple: <P = void, M2 extends Meta = Meta>(
+type ActionCreatorBundle<G extends string, M extends Meta = Meta> = {
+  simple: <P = unknown, M2 extends Meta = Meta>(
     type: string,
     meta?: M2,
     error?: boolean
   ) => ActionCreator<P, M2 & Partial<M>>;
-  async: <P = void, R = void, E = void, M2 extends Meta = Meta>(
+  async: <P = unknown, R = unknown, E = unknown, M2 extends Meta = Meta>(
     type: string,
     meta?: M2
   ) => AsyncActionCreators<P, R, E, M2 & Partial<M>>;
+  group: G;
 };
 
-/**
- * Interface for an action creator factory
- *
- * @since 5.0.0
- */
-export type ActionCreatorFactory = <M extends Meta = Meta>(
-  type: string,
-  commonMeta?: M,
-  error?: boolean
-) => ActionCreatorBundle<M>;
-
-/**
- * @since 7.0.0
- */
 export const collapseType = (...types: string[]) =>
   types.length > 0 ? types.join("/") : "UNKNOWN_TYPE";
 
-/**
- * Action Combinators
- */
 const matcherFactory = <P, M>(type: string): ActionMatcher<P, M> => ({
   match: (action: TypedAction): action is Action<P, M> => action.type === type
 });
@@ -150,6 +133,10 @@ const typeFactory = (...types: string[]): TypedAction => ({
 });
 
 /**
+ * The simplest way to create an action.
+ * Generally, for all but the simplest of applications, using
+ * actionCreatorsFactory is a better move.
+ *
  * @since 7.0.0
  */
 export const actionFactory = <P, M extends Meta = Meta>(
@@ -157,11 +144,11 @@ export const actionFactory = <P, M extends Meta = Meta>(
   commonMeta?: M,
   error = false
 ): ActionFunction<P, M> =>
-  ((payload: P, meta: M) => ({
+  ((value: P, meta: M) => ({
     type,
     error,
     meta: { ...commonMeta, ...meta },
-    payload
+    value
   })) as ActionFunction<P, M>;
 
 /**
@@ -169,7 +156,7 @@ export const actionFactory = <P, M extends Meta = Meta>(
  *
  * @since 5.0.0
  */
-export const actionCreator = <P, M extends Meta = Meta>(
+const actionCreator = <P, M extends Meta = Meta>(
   type: string,
   commonMeta?: M,
   error = false
@@ -185,7 +172,7 @@ export const actionCreator = <P, M extends Meta = Meta>(
  *
  * @since 5.0.0
  */
-export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
+const asyncActionsCreator = <P, R, E, M extends Meta = Meta>(
   group: string,
   commonMeta?: M
 ): AsyncActionCreators<P, R, E, M> => ({
@@ -206,10 +193,10 @@ export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
  *
  * @since 5.0.0
  */
-export const actionCreatorFactory = <M extends Meta = Meta>(
-  group: string,
+export const actionCreatorFactory = <G extends string, M extends Meta = Meta>(
+  group: G,
   groupMeta?: M
-): ActionCreatorBundle<M> => {
+): ActionCreatorBundle<G, M> => {
   const simple = <P, M2 extends Meta = Meta>(
     type: string,
     defaultMeta?: M2,
@@ -222,13 +209,14 @@ export const actionCreatorFactory = <M extends Meta = Meta>(
     );
 
   const async = <P, R, E, M2 extends Meta>(type: string, defaultMeta?: M2) =>
-    asyncActionCreators<P, R, E, Partial<M> & M2>(
+    asyncActionsCreator<P, R, E, Partial<M> & M2>(
       collapseType(group, type),
       Object.assign({}, groupMeta, defaultMeta)
     );
 
   return {
     simple,
-    async
+    async,
+    group
   };
 };

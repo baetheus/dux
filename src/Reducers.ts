@@ -17,9 +17,8 @@ import {
   Action,
   ActionCreator,
   AsyncActionCreators,
-  Failure,
+  ExtractAction,
   Meta,
-  Success,
   TypedAction
 } from "./Actions";
 
@@ -28,616 +27,39 @@ import {
  *
  * @since 5.0.0
  */
-export type Reducer<S, I = void> = (s: S, r: I) => S;
+export type Reducer<S, A extends TypedAction = TypedAction> = (s: S, a: A) => S;
 
 /**
- * Success Reducer Interface
+ * Case function matches ActionCreator to Reducer.
  *
  * @since 5.0.0
  */
-export type ReducerSuccess<S, I, O> = (s: S, r: Success<I, O>) => S;
-
-/**
- * Failure Reducer Interface
- *
- * @since 5.0.0
- */
-export type ReducerFailure<S, I, O = Error> = (s: S, r: Failure<I, O>) => S;
-
-/**
- * Action Reducer Interface
- *
- * @since 5.0.0
- */
-export type ActionReducer<S, P, M extends Meta> = (
-  state: S,
-  action: Action<P, M>
-) => S;
-
-/**
- * Interface for action handler.
- *
- * @since 5.0.0
- */
-export type Handler<S, P> = (state: S, payload: P) => S;
-
-/**
- * Variadic interface for casesFn.
- *
- * @since 5.0.0
- */
-export interface CasesFn {
-  <S, P1>(
-    actionCreator: [ActionCreator<P1, any>],
-    handler: Handler<S, P1>
-  ): ActionReducer<S, P1, any>;
-  <S, P1, P2>(
-    actionCreator: [ActionCreator<P1, any>, ActionCreator<P2, any>],
-    handler: Handler<S, P1 | P2>
-  ): ActionReducer<S, P1 | P2, any>;
-  <S, P1, P2, P3>(
-    actionCreator: [
-      ActionCreator<P1, any>,
-      ActionCreator<P2, any>,
-      ActionCreator<P3, any>
-    ],
-    handler: Handler<S, P1 | P2 | P3>
-  ): ActionReducer<S, P1 | P2 | P3, any>;
-  <S, P1, P2, P3, P4>(
-    actionCreator: [
-      ActionCreator<P1, any>,
-      ActionCreator<P2, any>,
-      ActionCreator<P3, any>,
-      ActionCreator<P4, any>
-    ],
-    handler: Handler<S, P1 | P2 | P3 | P4>
-  ): ActionReducer<S, P1 | P2 | P3 | P4, any>;
-  <S, P1, P2, P3, P4, P5>(
-    actionCreator: [
-      ActionCreator<P1, any>,
-      ActionCreator<P2, any>,
-      ActionCreator<P3, any>,
-      ActionCreator<P4, any>,
-      ActionCreator<P5, any>
-    ],
-    handler: Handler<S, P1 | P2 | P3 | P4 | P5>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5, any>;
-  <S, P1, P2, P3, P4, P5, P6>(
-    actionCreator: [
-      ActionCreator<P1, any>,
-      ActionCreator<P2, any>,
-      ActionCreator<P3, any>,
-      ActionCreator<P4, any>,
-      ActionCreator<P5, any>,
-      ActionCreator<P5, any>
-    ],
-    handler: Handler<S, P1 | P2 | P3 | P4 | P5 | P6>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6, any>;
-  <S>(
-    actionCreator: [ActionCreator<any, any>],
-    handler: Handler<S, any>
-  ): ActionReducer<S, any, any>;
-}
-
-/**
- * Variadic interface for reduceFn.
- *
- * @since 5.0.0
- */
-export interface ReducerFn {
-  <S>(): ActionReducer<S, void, any>;
-  <S, P1>(c1: ActionReducer<S, P1, any>): ActionReducer<S, P1, any>;
-  <S, P1, P2>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>
-  ): ActionReducer<S, P1 | P2, any>;
-  <S, P1, P2, P3>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>
-  ): ActionReducer<S, P1 | P2 | P3, any>;
-  <S, P1, P2, P3, P4>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4, any>;
-  <S, P1, P2, P3, P4, P5>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5, any>;
-  <S, P1, P2, P3, P4, P5, P6>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6, any>;
-  <S, P1, P2, P3, P4, P5, P6, P7>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6 | P7, any>;
-  <S, P1, P2, P3, P4, P5, P6, P7, P8>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8, any>;
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9, any>;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>
-  ): ActionReducer<S, P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9 | P10, any>;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>
-  ): ActionReducer<
-    S,
-    P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9 | P10 | P11,
-    any
-  >;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>
-  ): ActionReducer<
-    S,
-    P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9 | P10 | P11 | P12,
-    any
-  >;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>
-  ): ActionReducer<
-    S,
-    P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9 | P10 | P11 | P12 | P13,
-    any
-  >;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>
-  ): ActionReducer<
-    S,
-    P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 | P9 | P10 | P11 | P12 | P13 | P14,
-    any
-  >;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15,
-    any
-  >;
-
-  <S, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16>(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>,
-    c16: ActionReducer<S, P16, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15
-    | P16,
-    any
-  >;
-
-  <
-    S,
-    P1,
-    P2,
-    P3,
-    P4,
-    P5,
-    P6,
-    P7,
-    P8,
-    P9,
-    P10,
-    P11,
-    P12,
-    P13,
-    P14,
-    P15,
-    P16,
-    P17
-  >(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>,
-    c16: ActionReducer<S, P16, any>,
-    c17: ActionReducer<S, P17, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15
-    | P16
-    | P17,
-    any
-  >;
-
-  <
-    S,
-    P1,
-    P2,
-    P3,
-    P4,
-    P5,
-    P6,
-    P7,
-    P8,
-    P9,
-    P10,
-    P11,
-    P12,
-    P13,
-    P14,
-    P15,
-    P16,
-    P17,
-    P18
-  >(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>,
-    c16: ActionReducer<S, P16, any>,
-    c17: ActionReducer<S, P17, any>,
-    c18: ActionReducer<S, P18, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15
-    | P16
-    | P17
-    | P18,
-    any
-  >;
-
-  <
-    S,
-    P1,
-    P2,
-    P3,
-    P4,
-    P5,
-    P6,
-    P7,
-    P8,
-    P9,
-    P10,
-    P11,
-    P12,
-    P13,
-    P14,
-    P15,
-    P16,
-    P17,
-    P18,
-    P19
-  >(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>,
-    c16: ActionReducer<S, P16, any>,
-    c17: ActionReducer<S, P17, any>,
-    c18: ActionReducer<S, P18, any>,
-    c19: ActionReducer<S, P19, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15
-    | P16
-    | P17
-    | P18
-    | P19,
-    any
-  >;
-
-  <
-    S,
-    P1,
-    P2,
-    P3,
-    P4,
-    P5,
-    P6,
-    P7,
-    P8,
-    P9,
-    P10,
-    P11,
-    P12,
-    P13,
-    P14,
-    P15,
-    P16,
-    P17,
-    P18,
-    P19,
-    P20
-  >(
-    c1: ActionReducer<S, P1, any>,
-    c2: ActionReducer<S, P2, any>,
-    c3: ActionReducer<S, P3, any>,
-    c4: ActionReducer<S, P4, any>,
-    c5: ActionReducer<S, P5, any>,
-    c6: ActionReducer<S, P6, any>,
-    c7: ActionReducer<S, P7, any>,
-    c8: ActionReducer<S, P8, any>,
-    c9: ActionReducer<S, P9, any>,
-    c10: ActionReducer<S, P10, any>,
-    c11: ActionReducer<S, P11, any>,
-    c12: ActionReducer<S, P12, any>,
-    c13: ActionReducer<S, P13, any>,
-    c14: ActionReducer<S, P14, any>,
-    c15: ActionReducer<S, P15, any>,
-    c16: ActionReducer<S, P16, any>,
-    c17: ActionReducer<S, P17, any>,
-    c18: ActionReducer<S, P18, any>,
-    c19: ActionReducer<S, P19, any>,
-    c20: ActionReducer<S, P20, any>
-  ): ActionReducer<
-    S,
-    | P1
-    | P2
-    | P3
-    | P4
-    | P5
-    | P6
-    | P7
-    | P8
-    | P9
-    | P10
-    | P11
-    | P12
-    | P13
-    | P14
-    | P15
-    | P16
-    | P17
-    | P18
-    | P19
-    | P20,
-    any
-  >;
-}
-
-/**
- * Case function matches ActionCreator to handler.
- *
- * @since 5.0.0
- */
-export const caseFn = <S, P, M extends Meta>(
+export const caseFn = <S, P, M>(
   action: ActionCreator<P, M>,
-  handler: Handler<S, P>
-): ActionReducer<S, P, M> => (s: S, a: Action<P, M>) =>
-  action.match(a) ? handler(s, a.payload) : s;
+  reducer: Reducer<S, Action<P, M>>
+): Reducer<S, TypedAction> => (s, a) => (action.match(a) ? reducer(s, a) : s);
 
 /**
- * Case function matches multiple ActionCreators to a handler.
+ * Case function matches multiple ActionCreators to a Reducer.
  *
  * @since 5.0.0
  */
-export const casesFn: CasesFn = <S>(
-  actions: Array<ActionCreator<any, any>>,
-  handler: Handler<S, any>
-): ActionReducer<S, any, any> => (s: S, a: Action<any, any>) =>
-  actions.some(({ match }) => match(a)) ? handler(s, a.payload) : s;
+export const casesFn = <S, A extends ActionCreator<any, any>[]>(
+  actionCreators: A,
+  reducer: Reducer<S, ExtractAction<A>>
+): Reducer<S, TypedAction> => (s, a) =>
+  actionCreators.some(({ match }) => match(a))
+    ? reducer(s, <ExtractAction<A>>a)
+    : s;
 
 /**
  * Compose caseFn and casesFn.
  *
  * @since 5.0.0
  */
-export const reducerFn: ReducerFn = <S>(
-  ...cases: Array<ActionReducer<S, any, any>>
-): ActionReducer<S, any, any> => (state: S, action: Action<any, any>) =>
+export const reducerFn = <S>(
+  ...cases: Array<Reducer<S, TypedAction>>
+): Reducer<S, TypedAction> => (state, action) =>
   cases.reduce((s, r) => r(s, action), state);
 
 /**
@@ -647,99 +69,65 @@ export const reducerFn: ReducerFn = <S>(
  */
 export const reducerDefaultFn = <S>(
   initialState: S,
-  ...cases: Array<ActionReducer<S, any, any>>
-) => (state: S | undefined = initialState, action: Action<any, any>): S =>
+  ...cases: Array<Reducer<S, TypedAction>>
+): Reducer<S | undefined, TypedAction> => (state = initialState, action) =>
   cases.reduce((s, r) => r(s, action), state);
+
+type AsyncReducerFactory = <P, R, E, M, S>(
+  a: AsyncActionCreators<P, R, E, Meta>,
+  l: Lens<S, DatumEither<E, R>>
+) => Reducer<S, TypedAction>;
 
 /**
  * Generate a reducer that wraps a single DatumEither store value
  *
  * @since 5.0.0
  */
-export const asyncReducerFactory = <P, R, E, M, S>(
-  action: AsyncActionCreators<P, R, E, M>,
-  lens: Lens<S, DatumEither<E, R>>
-) => {
-  const pendingReducer = (s: S, _: P) => lens.modify(toRefresh)(s);
-  const successReducer = (s: S, { result }: Success<P, R>) =>
-    lens.modify(_ => success(result))(s);
-  const failureReducer = (s: S, { error }: Failure<P, E>) =>
-    lens.modify(_ => failure(error))(s);
-
-  return reducerFn(
-    caseFn(action.pending, pendingReducer),
-    caseFn(action.success, successReducer),
-    caseFn(action.failure, failureReducer)
+export const asyncReducerFactory: AsyncReducerFactory = (action, lens) =>
+  reducerFn(
+    caseFn(action.pending, lens.modify(toRefresh)),
+    caseFn(action.success, (s, a) => lens.set(success(a.value.result))(s)),
+    caseFn(action.failure, (s, a) => lens.set(failure(a.value.error))(s))
   );
-};
+
+type AsyncEntityFactory = <P, R, E, S>(
+  a: AsyncActionCreators<P, R, E, Meta>,
+  l: Lens<S, Record<string, DatumEither<E, R>>>,
+  i: Lens<P, string>
+) => Reducer<S, TypedAction>;
+
+const composeRecord = <S, T, K extends keyof T>(
+  lens: Lens<S, T>,
+  def: T[K]
+) => (id: K) => lens.compose(Lens.fromNullableProp<T>()(id, def));
 
 /**
  * Generate a reducer that handles a record of multiple DatumEither store values
  *
  * @since 5.0.0
  */
-export const asyncEntityReducer = <P, R, E, M, S>(
-  action: AsyncActionCreators<P, R, E, M>,
-  lens: Lens<S, Record<string, DatumEither<E, R>>>,
-  toId: Lens<P, string>
-) => {
-  const idLens = (id: keyof Record<string, DatumEither<E, R>>) =>
-    lens.compose(
-      Lens.fromNullableProp<Record<string, DatumEither<E, R>>>()(id, initial)
-    );
-
-  const pendingReducer = (s: S, payload: P) =>
-    idLens(toId.get(payload)).modify(toRefresh)(s);
-  const successReducer = (s: S, { params, result }: Success<P, R>) =>
-    idLens(toId.get(params)).modify(_ => success(result))(s);
-  const failureReducer = (s: S, { params, error }: Failure<P, E>) =>
-    idLens(toId.get(params)).modify(_ => failure(error))(s);
-
+export const asyncEntityFactory: AsyncEntityFactory = (action, lens, toId) => {
+  const idLens = composeRecord(lens, initial);
   return reducerFn(
-    caseFn(action.pending, pendingReducer),
-    caseFn(action.success, successReducer),
-    caseFn(action.failure, failureReducer)
+    caseFn(action.pending, (s, a) =>
+      idLens(toId.get(a.value)).modify(toRefresh)(s)
+    ),
+    caseFn(action.success, (s, a) =>
+      idLens(toId.get(a.value.params)).set(success(a.value.result))(s)
+    ),
+    caseFn(action.failure, (s, a) =>
+      idLens(toId.get(a.value.params)).set(failure(a.value.error))(s)
+    )
   );
 };
-
-/**
- * Generates factories an asyncReducerFactory and asyncEntityReducer from an action.
- *
- * @since 5.1.0
- */
-export const asyncReducersFactory = <
-  P = void,
-  R = void,
-  E = Error,
-  M extends Meta = Meta
->(
-  action: AsyncActionCreators<P, R, E, M>
-) => ({
-  reducer: <S>(lens: Lens<S, DatumEither<E, R>>) =>
-    asyncReducerFactory(action, lens),
-  entityReducer: <S>(
-    lens: Lens<S, Record<string, DatumEither<E, R>>>,
-    toId: Lens<P, string>
-  ) => asyncEntityReducer(action, lens, toId)
-});
-
-/**
- * Splits a TypedAction into a non-empty array of its component types
- *
- * *Note*: String.split() always returns a non-empty array
- *
- * @since 7.1.0
- */
-export const splitType = (action: TypedAction): string[] & [string] =>
-  action.type.split("/") as string[] & [string];
 
 /**
  * Filters actions by first section of action type to bypass sections of the store
  *
  * @since 7.1.0
  */
-export const filterReducer = <S, P, M>(
-  groupName: string,
-  reducer: ActionReducer<S, P, M>
-): ActionReducer<S, P, M> => (state: S, action: Action<P, M>): S =>
-  splitType(action)[0] === groupName ? reducer(state, action) : state;
+export const filterReducer = <S, P>(
+  match: string,
+  reducer: Reducer<S, TypedAction>
+): Reducer<S, TypedAction> => (state, action) =>
+  action.type.startsWith(match) ? reducer(state, action) : state;
