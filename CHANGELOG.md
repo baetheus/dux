@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.0](https://github.com/nullpub/dux/compare/v7.1.3...v8.0.0-prerelease.0) (2020-03-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* removed many exports
+
+* added Store implementation (redux, ngrx, akita replacement)
+* exported ExtractAction
+* simplified Meta type
+* fixed types for filterActions
+* fixed types in reducers
+* implemented tests for Store
+
+### Features
+
+* version 8.0.0 improvements ([5867ed8](https://github.com/nullpub/dux/commit/5867ed8a0d9317f55f7791128246df6190009402))
+
+
+### Bug Fixes
+
+* handle epic async throws (Promise.reject, throwError) ([4bcd998](https://github.com/nullpub/dux/commit/4bcd9989ec0115655de56d018d0acf8557df46bc))
+
 ### [7.1.3](https://github.com/nullpub/dux/compare/v7.1.2...v7.1.3) (2020-01-29)
 
 
