@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import { toArray, take, delay, tap } from "rxjs/operators";
 
 import * as S from "../src/Store";
@@ -92,6 +92,42 @@ describe("Store", () => {
       store.removeEpics(foreverEpic);
       done();
     }, 200);
+  });
+
+  it("epics promises", done => {
+    const pingEpic: S.Epic<any> = async (_, a) => {
+      if (ping.match(a)) {
+        return pong();
+      }
+    };
+    const pongEpic: S.Epic<any> = (_, a) => {
+      if (pong.match(a)) {
+        done();
+      }
+    };
+    const store = S.createStore({}).addEpics(pingEpic, pongEpic);
+    store.dispatch(ping());
+  });
+
+  it("handles rejecting epics", done => {
+    assert.doesNotThrow(() => {
+      const rejectEpic: S.Epic<any> = async () =>
+        Promise.reject("You shall not pass!");
+      const doneEpic: S.Epic<any> = (_, a) =>
+        pong.match(a) ? done() : undefined;
+      const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
+      store.dispatch(ping(), pong());
+    });
+  });
+
+  it("handles throwError epics", done => {
+    assert.doesNotThrow(() => {
+      const rejectEpic: S.Epic<any> = () => throwError("You shall not pass!");
+      const doneEpic: S.Epic<any> = (_, a) =>
+        pong.match(a) ? done() : undefined;
+      const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
+      store.dispatch(ping(), pong());
+    });
   });
 
   it("metaReduces", done => {

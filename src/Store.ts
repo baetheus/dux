@@ -7,24 +7,25 @@
 import { Reducer, caseFn, reducerFn } from "./Reducers";
 import { TypedAction, actionCreatorFactory, ActionCreator } from "./Actions";
 import {
-  Observable,
   BehaviorSubject,
-  Subject,
-  merge,
-  isObservable,
-  of,
+  EMPTY,
   from,
-  EMPTY
+  isObservable,
+  merge,
+  Observable,
+  of,
+  Subject
 } from "rxjs";
 import {
-  share,
+  catchError,
+  distinctUntilChanged,
+  filter,
+  map,
   mergeMap,
   scan,
-  map,
-  withLatestFrom,
+  share,
   takeUntil,
-  filter,
-  distinctUntilChanged
+  withLatestFrom
 } from "rxjs/operators";
 
 /**
@@ -37,14 +38,6 @@ const objEqC = <T>(a: T) => (b: T) => a === b;
 const isIn = <T>(as: T[]) => (b: T) => as.some(objEqC(b));
 const isNotIn = <T>(as: T[]) => (b: T) => !isIn(as)(b);
 const isNotNil = <T>(t: T | Nil): t is T => t !== undefined && t !== null;
-const isObject = (u: unknown): u is Record<string, unknown> => {
-  const s = Object.prototype.toString.call(u);
-  return s === "[object Object]" || s === "[object Window]";
-};
-const isPromise = <T>(v: unknown): v is PromiseLike<T> =>
-  isObject(v) &&
-  typeof v.subscribe !== "function" &&
-  typeof v.then === "function";
 
 /**
  * Internal store structure.
@@ -141,19 +134,38 @@ type InternalEpic<S> = (
 ) => Observable<TypedAction>;
 
 /**
- * Epics can output an action, a promise with an action, an observable of actions, or nothing.
- * This function lifts all possible results into an observable of actions.
+ * Maps all epic responses into observables. Handles returning rejected
+ * promises and erroring observables. Filters null responses.
  */
-const toObservable = <T>(
-  out: Observable<T> | Promise<T> | T | Nil
-): Observable<T> =>
-  isNotNil(out)
-    ? isObservable<T>(out)
-      ? out
-      : isPromise<T>(out)
-      ? from(out)
-      : of(out)
-    : EMPTY;
+const wrapEpic = <S>(
+  state: S,
+  action: TypedAction,
+  state$: Observable<S>,
+  actions$: Observable<TypedAction>
+) => (epic: Epic<S>): Observable<TypedAction> =>
+  from(
+    Promise.resolve(epic(state, action, state$, actions$)).catch(error => {
+      console.error("Epic returned a rejected promise.", {
+        state,
+        action,
+        epic,
+        error
+      });
+      return EMPTY;
+    })
+  ).pipe(
+    mergeMap(result => (isObservable(result) ? result : of(result))),
+    catchError(error => {
+      console.error("Epic returned an observable that errored.", {
+        state,
+        action,
+        epic,
+        error
+      });
+      return EMPTY;
+    }),
+    filter(isNotNil)
+  );
 
 /**
  * Creates an observable that emits on REMOVE_EPICS events that match the given Epic
@@ -184,7 +196,12 @@ const combineEpics = <S>(
 ) =>
   merge(
     ...epics.map(epic =>
-      toObservable(epic(state, action, state$, actions$)).pipe(
+      wrapEpic(
+        state,
+        action,
+        state$,
+        actions$
+      )(epic).pipe(
         takeUntil(createEpicTakeUntil(epic, actionCreator, internalActions$))
       )
     )
@@ -229,7 +246,11 @@ export type Epic<S> = (
   action: TypedAction,
   state$: Observable<S>,
   actions$: Observable<TypedAction>
-) => Observable<TypedAction> | Promise<TypedAction> | TypedAction | void;
+) =>
+  | Observable<TypedAction | Nil>
+  | Promise<TypedAction | Nil>
+  | TypedAction
+  | Nil;
 
 /**
  * A Selector narrows or modifies the state. It is effectively a lens into a particular
