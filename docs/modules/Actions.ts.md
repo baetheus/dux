@@ -20,17 +20,11 @@ Actions types and action factories
 - [Success (interface)](#success-interface)
 - [TypedAction (interface)](#typedaction-interface)
 - [ActionCreator (type alias)](#actioncreator-type-alias)
-- [ActionCreatorBundle (type alias)](#actioncreatorbundle-type-alias)
-- [ActionCreatorFactory (type alias)](#actioncreatorfactory-type-alias)
-- [ActionFunction (type alias)](#actionfunction-type-alias)
-- [ActionMatcher (type alias)](#actionmatcher-type-alias)
+- [ExtractAction (type alias)](#extractaction-type-alias)
 - [Meta (type alias)](#meta-type-alias)
-- [ResultAction (type alias)](#resultaction-type-alias)
-- [actionCreator (function)](#actioncreator-function)
-- [actionCreatorFactory (function)](#actioncreatorfactory-function)
-- [actionFactory (function)](#actionfactory-function)
-- [asyncActionCreators (function)](#asyncactioncreators-function)
-- [collapseType (function)](#collapsetype-function)
+- [actionCreatorFactory](#actioncreatorfactory)
+- [actionFactory](#actionfactory)
+- [collapseType](#collapsetype)
 
 ---
 
@@ -41,9 +35,8 @@ Interface for FSA Action.
 **Signature**
 
 ```ts
-export interface Action<P, M extends Meta = Meta> {
-  readonly type: string
-  readonly payload: P
+export interface Action<P, M extends Meta = Meta> extends TypedAction {
+  readonly value: P
   readonly meta: M
   readonly error: boolean
 }
@@ -58,7 +51,7 @@ Interface for async action creator
 **Signature**
 
 ```ts
-export interface AsyncActionCreators<P = void, R = void, E = void, M extends Meta = Meta> {
+export interface AsyncActionCreators<P = unknown, R = unknown, E = unknown, M extends Meta = Meta> {
   readonly pending: ActionCreator<P, M>
   readonly success: ActionCreator<Success<P, R>, M>
   readonly failure: ActionCreator<Failure<P, E>, M>
@@ -99,7 +92,9 @@ Added in v5.0.0
 
 # TypedAction (interface)
 
-Interface for an action type
+The bare minimum interface for actions in the dux system.
+If your existing store doesn't have actions with a type parameter
+that you can switch on then dux won't work (at least with typescript).
 
 **Signature**
 
@@ -118,76 +113,22 @@ Interface for action creator intersection
 **Signature**
 
 ```ts
-export type ActionCreator<P = void, M extends Meta = Meta> = TypedAction & ActionMatcher<P, M> & ActionFunction<P, M>
+export type ActionCreator<P = unknown, M extends Meta = Meta> = TypedAction & ActionMatcher<P, M> & ActionFunction<P, M>
 ```
 
 Added in v5.0.0
 
-# ActionCreatorBundle (type alias)
+# ExtractAction (type alias)
 
-Interface for the action creator bundle.
+Extract an Action type from an ActionCreator
 
 **Signature**
 
 ```ts
-export type ActionCreatorBundle<M extends Meta = Meta> = {
-  simple: <P = void, M2 extends Meta = Meta>(
-    type: string,
-    meta?: M2,
-    error?: boolean
-  ) => ActionCreator<P, M2 & Partial<M>>
-  async: <P = void, R = void, E = void, M2 extends Meta = Meta>(
-    type: string,
-    meta?: M2
-  ) => AsyncActionCreators<P, R, E, M2 & Partial<M>>
-}
+export type ExtractAction<T> = T extends ActionCreator<infer P, infer M>[] ? Action<P, M> : Action<unknown, Meta>
 ```
 
-Added in v5.0.0
-
-# ActionCreatorFactory (type alias)
-
-Interface for an action creator factory
-
-**Signature**
-
-```ts
-export type ActionCreatorFactory = <M extends Meta = Meta>(
-  type: string,
-  commonMeta?: M,
-  error?: boolean
-) => ActionCreatorBundle<M>
-```
-
-Added in v5.0.0
-
-# ActionFunction (type alias)
-
-Interface for action creator function
-
-**Signature**
-
-```ts
-export type ActionFunction<P = void, M extends Meta = Meta> = P extends void
-  ? (payload?: P, meta?: M) => Action<P, M>
-  : (payload: P, meta?: M) => Action<P, M>
-```
-
-Added in v5.0.0
-
-# ActionMatcher (type alias)
-
-Interface for action matcher property
-
-**Signature**
-
-```ts
-export type ActionMatcher<P, M> = {
-  readonly match: (action: TypedAction) => action is Action<P, M>
-}
-```
-
-Added in v5.0.0
+Added in v8.0.0
 
 # Meta (type alias)
 
@@ -196,55 +137,31 @@ Interface for metadata.
 **Signature**
 
 ```ts
-export type Meta = Readonly<object> & { readonly [key: string]: any }
+export type Meta = Readonly<{ [key: string]: any }>
 ```
 
 Added in v5.0.0
 
-# ResultAction (type alias)
-
-Interface for result actions
-
-**Signature**
-
-```ts
-export type ResultAction<P, R, E, M extends Meta> = Action<Success<P, R>, M> | Action<Failure<P, E>, M>
-```
-
-Added in v5.0.0
-
-# actionCreator (function)
-
-General action creator factory
-
-**Signature**
-
-```ts
-export const actionCreator = <P, M extends Meta = Meta>(
-  type: string,
-  commonMeta?: M,
-  error = false
-): ActionCreator<P, M> => ...
-```
-
-Added in v5.0.0
-
-# actionCreatorFactory (function)
+# actionCreatorFactory
 
 General action group creator (wraps other action creators into a group)
 
 **Signature**
 
 ```ts
-export const actionCreatorFactory = <M extends Meta = Meta>(
-  group: string,
+export const actionCreatorFactory = <G extends string, M extends Meta = Meta>(
+  group: G,
   groupMeta?: M
-): ActionCreatorBundle<M> => ...
+): ActionCreatorBundle<G, M> => ...
 ```
 
 Added in v5.0.0
 
-# actionFactory (function)
+# actionFactory
+
+The simplest way to create an action.
+Generally, for all but the simplest of applications, using
+actionCreatorsFactory is a better move.
 
 **Signature**
 
@@ -254,27 +171,12 @@ export const actionFactory = <P, M extends Meta = Meta>(
   commonMeta?: M,
   error = false
 ): ActionFunction<P, M> =>
-  ((payload: P, meta: M) => ...
+  ((value: P, meta: M) => ...
 ```
 
 Added in v7.0.0
 
-# asyncActionCreators (function)
-
-Async action creator factory
-
-**Signature**
-
-```ts
-export const asyncActionCreators = <P, R, E, M extends Meta = Meta>(
-  group: string,
-  commonMeta?: M
-): AsyncActionCreators<P, R, E, M> => ...
-```
-
-Added in v5.0.0
-
-# collapseType (function)
+# collapseType
 
 **Signature**
 
@@ -282,4 +184,4 @@ Added in v5.0.0
 export const collapseType = (...types: string[]) => ...
 ```
 
-Added in v7.0.0
+Added in v5.0.0

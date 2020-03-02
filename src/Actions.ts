@@ -81,7 +81,9 @@ export type ActionCreator<P = unknown, M extends Meta = Meta> = TypedAction &
   ActionFunction<P, M>;
 
 /**
- * Helper type to make variadic extraction easier
+ * Extract an Action type from an ActionCreator
+ *
+ * @since 8.0.0
  */
 export type ExtractAction<T> = T extends ActionCreator<infer P, infer M>[]
   ? Action<P, M>
@@ -121,6 +123,9 @@ type ActionCreatorBundle<G extends string, M extends Meta = Meta> = {
   group: G;
 };
 
+/**
+ * @since 5.0.0
+ */
 export const collapseType = (...types: string[]) =>
   types.length > 0 ? types.join("/") : "UNKNOWN_TYPE";
 

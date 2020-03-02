@@ -1,3 +1,9 @@
+/**
+ * @since 8.0.0
+ *
+ * The @nll/dux store operates like redux with redux-observable.
+ */
+
 import { Reducer, caseFn, reducerFn } from "./Reducers";
 import { TypedAction, actionCreatorFactory, ActionCreator } from "./Actions";
 import {
@@ -7,6 +13,7 @@ import {
   merge,
   isObservable,
   of,
+  from,
   EMPTY
 } from "rxjs";
 import {
@@ -30,6 +37,14 @@ const objEqC = <T>(a: T) => (b: T) => a === b;
 const isIn = <T>(as: T[]) => (b: T) => as.some(objEqC(b));
 const isNotIn = <T>(as: T[]) => (b: T) => !isIn(as)(b);
 const isNotNil = <T>(t: T | Nil): t is T => t !== undefined && t !== null;
+const isObject = (u: unknown): u is Record<string, unknown> => {
+  const s = Object.prototype.toString.call(u);
+  return s === "[object Object]" || s === "[object Window]";
+};
+const isPromise = <T>(v: unknown): v is PromiseLike<T> =>
+  isObject(v) &&
+  typeof v.subscribe !== "function" &&
+  typeof v.then === "function";
 
 /**
  * Internal store structure.
@@ -126,11 +141,19 @@ type InternalEpic<S> = (
 ) => Observable<TypedAction>;
 
 /**
- * Epics can output an action, an observable of actions, or nothing. This function lifts
- * all possible results into an observable of actions.
+ * Epics can output an action, a promise with an action, an observable of actions, or nothing.
+ * This function lifts all possible results into an observable of actions.
  */
-const toObservable = <T>(out: Observable<T> | T | Nil): Observable<T> =>
-  isNotNil(out) ? (isObservable<T>(out) ? out : of(out)) : EMPTY;
+const toObservable = <T>(
+  out: Observable<T> | Promise<T> | T | Nil
+): Observable<T> =>
+  isNotNil(out)
+    ? isObservable<T>(out)
+      ? out
+      : isPromise<T>(out)
+      ? from(out)
+      : of(out)
+    : EMPTY;
 
 /**
  * Creates an observable that emits on REMOVE_EPICS events that match the given Epic
@@ -171,6 +194,17 @@ const combineEpics = <S>(
  * A MetaReducer is a function that takes a reducer and returns a reducer. It's useful
  * for modifying or tracking the state before and after a reducer fires.
  *
+ * @example
+ * import { MetaReducer } from "../../src/Store";
+ *
+ * export const loggingMetaReducer: MetaReducer<any> = reducer => {
+ *     return function loggingReducer(previousState, action) {
+ *         const state = reducer(previousState, action);
+ *         console.log(action.type, { previousState, state, action });
+ *         return state;
+ *     };
+ * };
+ *
  * @since 8.0.0
  */
 export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>;
@@ -178,8 +212,15 @@ export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>;
 /**
  * An Epic encapsulates side effects or temporal changes for the store.
  * It is given access to the current action and state, the action and
- * state observables, and may return nothing, an action, or an observable
- * of actions.
+ * state observables, and may return nothing, an action, a promise that
+ * contains an action, or an observable of actions.
+ *
+ * @example
+ * import { Epic } from "../../src/Store";
+ *
+ * export const loggingEpic: Epic<any> = (action, state) => {
+ *     console.log(`State after ${action.type} reduced:`, { state, action });
+ * }
  *
  * @since 8.0.0
  */
@@ -188,11 +229,22 @@ export type Epic<S> = (
   action: TypedAction,
   state$: Observable<S>,
   actions$: Observable<TypedAction>
-) => Observable<TypedAction> | TypedAction | void;
+) => Observable<TypedAction> | Promise<TypedAction> | TypedAction | void;
 
 /**
  * A Selector narrows or modifies the state. It is effectively a lens into a particular
  * part of the state.
+ *
+ * @example
+ * import { createStore } from "../../src/Store";
+ *
+ * const store = createStore({ count: 0 }).addReducers(
+ *     (state, _) => ({ count: state.count + 1 })
+ * );
+ * store.select(state => state.count).subscribe(
+ *     count => console.log(`New count is: ${count}`)
+ * )
+ * store.dispatch({ type: 'ANY_ACTION' });
  *
  * @since 8.0.0
  */
@@ -210,6 +262,16 @@ export type Selector<S, O> = (state: S) => O;
  * 4. Selectors are called in the order they were added.
  * 5. Epics are called in the order they were added.
  * 6. Actions that are emitted by Epics are pushed back into the queue.
+ *
+ * @example
+ * import { createStore } from "../../src/Store";
+ *
+ * type State = {
+ *     count: number
+ * }
+ * const initialState: State = { count: 0 };
+ *
+ * export const myStore = createStore(initialState);
  *
  * @since 8.0.0
  */

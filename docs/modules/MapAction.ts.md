@@ -14,11 +14,11 @@ Pipeable observable operators for mapping
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [mapAction (function)](#mapaction-function)
+- [mapAction](#mapaction)
 
 ---
 
-# mapAction (function)
+# mapAction
 
 Filters on an action and a projection, and merges the output
 of the projection with the original action.
