@@ -1,0 +1,13 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Node Dependencies
+      run: npm i
+    - name: Run Tests
+      run: npm run test
