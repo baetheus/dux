@@ -1,6 +1,6 @@
 ---
 title: Store.ts
-nav_order: 6
+nav_order: 7
 parent: Modules
 ---
 
@@ -14,42 +14,11 @@ The @nll/dux store operates like redux with redux-observable.
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Epic (type alias)](#epic-type-alias)
 - [MetaReducer (type alias)](#metareducer-type-alias)
 - [Selector (type alias)](#selector-type-alias)
 - [createStore](#createstore)
 
 ---
-
-# Epic (type alias)
-
-An Epic encapsulates side effects or temporal changes for the store.
-It is given access to the current action and state, the action and
-state observables, and may return nothing, an action, a promise that
-contains an action, or an observable of actions.
-
-**Signature**
-
-```ts
-export type Epic<S> = (
-  state: S,
-  action: TypedAction,
-  state$: Observable<S>,
-  actions$: Observable<TypedAction>
-) => Observable<TypedAction | Nil> | Promise<TypedAction | Nil> | TypedAction | Nil
-```
-
-**Example**
-
-```ts
-import { Epic } from '../../src/Store'
-
-export const loggingEpic: Epic<any> = (action, state) => {
-  console.log(`State after ${action.type} reduced:`, { state, action })
-}
-```
-
-Added in v8.0.0
 
 # MetaReducer (type alias)
 
