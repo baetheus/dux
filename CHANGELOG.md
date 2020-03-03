@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.2](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.1...v8.0.0-prerelease.2) (2020-03-03)
+
+
+### Bug Fixes
+
+* add StoreApi interface to fix createStore infer failures ([cd9341e](https://github.com/nullpub/dux/commit/cd9341eb5d218f1d9d61d517f8fc92ee7f08e36f))
+
 ## [8.0.0-prerelease.1](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.0...v8.0.0-prerelease.1) (2020-03-03)
 
 
