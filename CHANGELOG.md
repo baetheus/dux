@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.3](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.2...v8.0.0-prerelease.3) (2020-03-03)
+
+
+### Features
+
+* added getState compatibility function for redux ([a2c3bac](https://github.com/nullpub/dux/commit/a2c3baceae37cddb4545c90c49e2b6e964584b54))
+
 ## [8.0.0-prerelease.2](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.1...v8.0.0-prerelease.2) (2020-03-03)
 
 
