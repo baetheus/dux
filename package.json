@@ -1,6 +1,6 @@
 {
   "name": "@nll/dux",
-  "version": "8.0.0-prerelease.0",
+  "version": "8.0.0-prerelease.1",
   "description": "Flux and flux-like tools",
   "main": "lib/index.js",
   "module": "es6/index.js",

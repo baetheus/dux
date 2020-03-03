@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.1](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.0...v8.0.0-prerelease.1) (2020-03-03)
+
+
+### Features
+
+* split out Epic and add fromAsyncAction action. ([6989d23](https://github.com/nullpub/dux/commit/6989d23c6b39fbd0dce235d632adf28bb7de2160))
+
 ## [8.0.0-prerelease.0](https://github.com/nullpub/dux/compare/v7.1.3...v8.0.0-prerelease.0) (2020-03-02)
 
 
