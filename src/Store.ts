@@ -33,12 +33,30 @@ import {
  * Utility Types and Functions.
  */
 type Nil = undefined | null | void;
+type Eq<S> = (a: S, b: S) => boolean;
 
 const objEq = <T>(a: T, b: T): boolean => a === b;
 const objEqC = <T>(a: T) => (b: T) => a === b;
 const isIn = <T>(as: T[]) => (b: T) => as.some(objEqC(b));
 const isNotIn = <T>(as: T[]) => (b: T) => !isIn(as)(b);
 const isNotNil = <T>(t: T | Nil): t is T => t !== undefined && t !== null;
+
+/**
+ * The store API.
+ *
+ * @since 8.0.0
+ */
+export type StoreApi<S> = {
+  addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
+  removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
+  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
+  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
+  addEpics: (...epics: Epic<S>[]) => StoreApi<S>;
+  removeEpics: (...epics: Epic<S>[]) => StoreApi<S>;
+  select: <O>(selector: Selector<S, O>, predicate?: Eq<O>) => Observable<O>;
+  dispatch: (...as: TypedAction[]) => void;
+  destroy: () => void;
+};
 
 /**
  * Internal store structure.
@@ -331,34 +349,34 @@ export const createStore = <S>(state: S, name = "DEFAULT") => {
   /**
    * External API
    */
-  const store = {
-    addReducers: (...reducers: Reducer<S>[]) => {
+  const store: StoreApi<S> = {
+    addReducers: (...reducers) => {
       internalActionsS.next(actions.addReducers(reducers));
       return store;
     },
-    removeReducers: (...reducers: Reducer<S>[]) => {
+    removeReducers: (...reducers) => {
       internalActionsS.next(actions.removeReducers(reducers));
       return store;
     },
-    addMetaReducers: (...metaReducers: MetaReducer<S>[]) => {
+    addMetaReducers: (...metaReducers) => {
       internalActionsS.next(actions.addMetaReducers(metaReducers));
       return store;
     },
-    removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => {
+    removeMetaReducers: (...metaReducers) => {
       internalActionsS.next(actions.removeMetaReducers(metaReducers));
       return store;
     },
-    addEpics: (...epics: Epic<S>[]) => {
+    addEpics: (...epics) => {
       internalActionsS.next(actions.addEpics(epics));
       return store;
     },
-    removeEpics: (...epics: Epic<S>[]) => {
+    removeEpics: (...epics) => {
       internalActionsS.next(actions.removeEpics(epics));
       return store;
     },
-    select: <O>(selector: Selector<S, O>, predicate = objEq): Observable<O> =>
+    select: (selector, predicate = objEq) =>
       stateS.pipe(map(selector), distinctUntilChanged(predicate)),
-    dispatch: (...as: TypedAction[]) => as.forEach(a => actionsS.next(a)),
+    dispatch: (...as) => as.forEach(a => actionsS.next(a)),
     destroy: () => {
       epicSub.unsubscribe();
       stateSub.unsubscribe();
