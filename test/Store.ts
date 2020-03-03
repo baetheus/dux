@@ -149,4 +149,9 @@ describe("Store", () => {
     store.removeMetaReducers(alterMetaReducer);
     store.dispatch(ping(null, { from: "action" }));
   });
+
+  it("getState", () => {
+    const store = S.createStore({ count: 0 });
+    assert.deepStrictEqual(store.getState(), { count: 0 });
+  });
 });

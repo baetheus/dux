@@ -47,6 +47,7 @@ const isNotNil = <T>(t: T | Nil): t is T => t !== undefined && t !== null;
  * @since 8.0.0
  */
 export type StoreApi<S> = {
+  getState: <O>() => S;
   addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
   removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
   addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
@@ -350,6 +351,7 @@ export const createStore = <S>(state: S, name = "DEFAULT") => {
    * External API
    */
   const store: StoreApi<S> = {
+    getState: () => stateS.getValue(),
     addReducers: (...reducers) => {
       internalActionsS.next(actions.addReducers(reducers));
       return store;

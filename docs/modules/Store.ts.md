@@ -79,6 +79,7 @@ The store API.
 
 ```ts
 export type StoreApi<S> = {
+  getState: <O>() => S
   addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
   removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
   addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
