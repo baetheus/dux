@@ -16,6 +16,7 @@ The @nll/dux store operates like redux with redux-observable.
 
 - [MetaReducer (type alias)](#metareducer-type-alias)
 - [Selector (type alias)](#selector-type-alias)
+- [StoreApi (type alias)](#storeapi-type-alias)
 - [createStore](#createstore)
 
 ---
@@ -66,6 +67,28 @@ import { createStore } from '../../src/Store'
 const store = createStore({ count: 0 }).addReducers((state, _) => ({ count: state.count + 1 }))
 store.select(state => state.count).subscribe(count => console.log(`New count is: ${count}`))
 store.dispatch({ type: 'ANY_ACTION' })
+```
+
+Added in v8.0.0
+
+# StoreApi (type alias)
+
+The store API.
+
+**Signature**
+
+```ts
+export type StoreApi<S> = {
+  addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
+  removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
+  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
+  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
+  addEpics: (...epics: Epic<S>[]) => StoreApi<S>
+  removeEpics: (...epics: Epic<S>[]) => StoreApi<S>
+  select: <O>(selector: Selector<S, O>, predicate?: Eq<O>) => Observable<O>
+  dispatch: (...as: TypedAction[]) => void
+  destroy: () => void
+}
 ```
 
 Added in v8.0.0
