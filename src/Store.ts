@@ -6,6 +6,7 @@
 
 import { Reducer, caseFn, reducerFn } from "./Reducers";
 import { TypedAction, actionCreatorFactory, ActionCreator } from "./Actions";
+import { Epic } from "./Epics";
 import {
   BehaviorSubject,
   EMPTY,
@@ -225,32 +226,6 @@ const combineEpics = <S>(
  * @since 8.0.0
  */
 export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>;
-
-/**
- * An Epic encapsulates side effects or temporal changes for the store.
- * It is given access to the current action and state, the action and
- * state observables, and may return nothing, an action, a promise that
- * contains an action, or an observable of actions.
- *
- * @example
- * import { Epic } from "../../src/Store";
- *
- * export const loggingEpic: Epic<any> = (action, state) => {
- *     console.log(`State after ${action.type} reduced:`, { state, action });
- * }
- *
- * @since 8.0.0
- */
-export type Epic<S> = (
-  state: S,
-  action: TypedAction,
-  state$: Observable<S>,
-  actions$: Observable<TypedAction>
-) =>
-  | Observable<TypedAction | Nil>
-  | Promise<TypedAction | Nil>
-  | TypedAction
-  | Nil;
 
 /**
  * A Selector narrows or modifies the state. It is effectively a lens into a particular

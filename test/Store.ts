@@ -5,6 +5,7 @@ import { toArray, take, delay, tap } from "rxjs/operators";
 import * as S from "../src/Store";
 import * as R from "../src/Reducers";
 import * as A from "../src/Actions";
+import { Epic } from "../src/Epics";
 
 type Store = { count: number; meta?: string };
 const initStore: Store = { count: 0 };
@@ -27,7 +28,7 @@ const metaPropReducer = R.reducerFn<Store>(
   })
 );
 
-const pingEpic: S.Epic<any> = a => {
+const pingEpic: Epic<any> = a => {
   if (ping.match(a)) {
     return pong();
   }
@@ -70,7 +71,7 @@ describe("Store", () => {
   });
 
   it("epics", done => {
-    const pingPongEpic: S.Epic<any> = (_, a) => {
+    const pingPongEpic: Epic<any> = (_, a) => {
       if (ping.match(a)) {
         return pong();
       }
@@ -84,7 +85,7 @@ describe("Store", () => {
   });
 
   it("cancels epics", done => {
-    const foreverEpic: S.Epic<any> = () =>
+    const foreverEpic: Epic<any> = () =>
       of(pong()).pipe(delay(500), tap(assert.fail));
     const store = S.createStore({}).addEpics(foreverEpic);
     store.dispatch(ping());
@@ -95,12 +96,12 @@ describe("Store", () => {
   });
 
   it("epics promises", done => {
-    const pingEpic: S.Epic<any> = async (_, a) => {
+    const pingEpic: Epic<any> = async (_, a) => {
       if (ping.match(a)) {
         return pong();
       }
     };
-    const pongEpic: S.Epic<any> = (_, a) => {
+    const pongEpic: Epic<any> = (_, a) => {
       if (pong.match(a)) {
         done();
       }
@@ -111,9 +112,9 @@ describe("Store", () => {
 
   it("handles rejecting epics", done => {
     assert.doesNotThrow(() => {
-      const rejectEpic: S.Epic<any> = async () =>
+      const rejectEpic: Epic<any> = async () =>
         Promise.reject("You shall not pass!");
-      const doneEpic: S.Epic<any> = (_, a) =>
+      const doneEpic: Epic<any> = (_, a) =>
         pong.match(a) ? done() : undefined;
       const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
       store.dispatch(ping(), pong());
@@ -122,8 +123,8 @@ describe("Store", () => {
 
   it("handles throwError epics", done => {
     assert.doesNotThrow(() => {
-      const rejectEpic: S.Epic<any> = () => throwError("You shall not pass!");
-      const doneEpic: S.Epic<any> = (_, a) =>
+      const rejectEpic: Epic<any> = () => throwError("You shall not pass!");
+      const doneEpic: Epic<any> = (_, a) =>
         pong.match(a) ? done() : undefined;
       const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
       store.dispatch(ping(), pong());

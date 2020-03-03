@@ -36,7 +36,7 @@ export type Epic<S> = (
   action: TypedAction,
   state$: Observable<S>,
   actions$: Observable<TypedAction>
-) => Observable<TypedAction> | Promise<TypedAction> | TypedAction | void
+) => Observable<TypedAction | Nil> | Promise<TypedAction | Nil> | TypedAction | Nil
 ```
 
 **Example**
