@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.5](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.4...v8.0.0-prerelease.5) (2020-03-04)
+
+
+### Features
+
+* rename epic and add new once style epic. ([b9aa56d](https://github.com/nullpub/dux/commit/b9aa56d7d68cfc966bc741d4802cd41f7146a457))
+
 ## [8.0.0-prerelease.4](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.3...v8.0.0-prerelease.4) (2020-03-04)
 
 
