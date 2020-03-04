@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0-prerelease.4](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.3...v8.0.0-prerelease.4) (2020-03-04)
+
+
+### Bug Fixes
+
+* rewrite store implementation to be less streamy ([62cc590](https://github.com/nullpub/dux/commit/62cc590e65dea49d9337ebc2d32b148b93d112eb))
+
 ## [8.0.0-prerelease.3](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.2...v8.0.0-prerelease.3) (2020-03-03)
 
 
