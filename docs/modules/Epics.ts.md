@@ -33,10 +33,8 @@ contains an action, or an observable of actions.
 ```ts
 export type Epic<S> = (
   state: S,
-  action: TypedAction,
-  state$: Observable<S>,
-  actions$: Observable<TypedAction>
-) => Observable<TypedAction | Nil> | Promise<TypedAction | Nil> | TypedAction | Nil
+  action: TypedAction
+) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void
 ```
 
 **Example**

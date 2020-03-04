@@ -79,7 +79,8 @@ The store API.
 
 ```ts
 export type StoreApi<S> = {
-  getState: <O>() => S
+  getState: () => S
+  setState: (s: S) => void
   addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
   removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
   addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
@@ -112,7 +113,10 @@ The ordering of events in a running store is very specific:
 **Signature**
 
 ```ts
-export const createStore = <S>(state: S, name = "DEFAULT") => ...
+export const createStore = <S>(
+  state: S,
+  onError: (...e: unknown[]) => void = ON_ERROR
+): StoreApi<S> => ...
 ```
 
 **Example**

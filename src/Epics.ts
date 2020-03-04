@@ -10,8 +10,6 @@ import { TypedAction, AsyncActionCreators } from "./Actions";
 import { Observable, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 
-type Nil = undefined | null | void;
-
 /**
  * An Epic encapsulates side effects or temporal changes for the store.
  * It is given access to the current action and state, the action and
@@ -29,14 +27,8 @@ type Nil = undefined | null | void;
  */
 export type Epic<S> = (
   state: S,
-  action: TypedAction,
-  state$: Observable<S>,
-  actions$: Observable<TypedAction>
-) =>
-  | Observable<TypedAction | Nil>
-  | Promise<TypedAction | Nil>
-  | TypedAction
-  | Nil;
+  action: TypedAction
+) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void;
 
 /**
  * Construct an Epic from an AsyncActionCreator and a projection function.

@@ -46,8 +46,8 @@ describe("Store", () => {
         .addEpics(pingEpic)
         .removeReducers(countReducer)
         .removeMetaReducers(alterMetaReducer)
-        .removeEpics(pingEpic)
-        .destroy();
+        .removeEpics(pingEpic);
+      // .destroy();
     });
   });
 
@@ -76,7 +76,7 @@ describe("Store", () => {
         return pong();
       }
       if (pong.match(a)) {
-        return done();
+        done();
       }
     };
     S.createStore({})
@@ -85,8 +85,7 @@ describe("Store", () => {
   });
 
   it("cancels epics", done => {
-    const foreverEpic: Epic<any> = () =>
-      of(pong()).pipe(delay(500), tap(assert.fail));
+    const foreverEpic = () => of(pong()).pipe(delay(500), tap(assert.fail));
     const store = S.createStore({}).addEpics(foreverEpic);
     store.dispatch(ping());
     setTimeout(() => {
@@ -101,12 +100,12 @@ describe("Store", () => {
         return pong();
       }
     };
-    const pongEpic: Epic<any> = (_, a) => {
+    const pongEpic: Epic<any> = async (_, a) => {
       if (pong.match(a)) {
         done();
       }
     };
-    const store = S.createStore({}).addEpics(pingEpic, pongEpic);
+    const store = S.createStore({}, console.log).addEpics(pingEpic, pongEpic);
     store.dispatch(ping());
   });
 
@@ -153,5 +152,27 @@ describe("Store", () => {
   it("getState", () => {
     const store = S.createStore({ count: 0 });
     assert.deepStrictEqual(store.getState(), { count: 0 });
+  });
+
+  it("setState", () => {
+    const store = S.createStore({ count: 0 });
+    store.setState({ count: 1 });
+    assert.deepStrictEqual(store.getState(), { count: 1 });
+  });
+
+  it("destroys", done => {
+    const store = S.createStore({ count: 0 }).addReducers(countReducer);
+    store
+      .select(s => s.count)
+      .subscribe(n => {
+        if (n > 0) {
+          assert.fail("Selector should never be called with a value over 0.");
+        }
+      });
+    store.destroy();
+    setTimeout(() => {
+      store.dispatch(modify(1));
+      done();
+    }, 200);
   });
 });
