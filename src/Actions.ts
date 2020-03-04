@@ -20,7 +20,7 @@ export interface TypedAction {
  *
  * @since 5.0.0
  */
-export type Meta = Readonly<{ [key: string]: any }>;
+export type Meta = Record<string, any>;
 
 /**
  * Interface for FSA Action.
@@ -67,9 +67,7 @@ type ActionMatcher<P, M> = {
  *
  * @since 5.0.0
  */
-type ActionFunction<P = unknown, M extends Meta = Meta> = P extends unknown
-  ? (payload?: unknown, meta?: M) => Action<P, M>
-  : (payload: P, meta?: M) => Action<P, M>;
+type ActionFunction<P, M extends Meta = Meta> = (payload: P, meta?: M) => Action<P, M>;
 
 /**
  * Interface for action creator intersection
@@ -94,12 +92,7 @@ export type ExtractAction<T> = T extends ActionCreator<infer P, infer M>[]
  *
  * @since 5.0.0
  */
-export interface AsyncActionCreators<
-  P = unknown,
-  R = unknown,
-  E = unknown,
-  M extends Meta = Meta
-> {
+export interface AsyncActionCreators<P = unknown, R = unknown, E = unknown, M extends Meta = Meta> {
   readonly pending: ActionCreator<P, M>;
   readonly success: ActionCreator<Success<P, R>, M>;
   readonly failure: ActionCreator<Failure<P, E>, M>;
@@ -182,15 +175,8 @@ const asyncActionsCreator = <P, R, E, M extends Meta = Meta>(
   commonMeta?: M
 ): AsyncActionCreators<P, R, E, M> => ({
   pending: actionCreator<P, M>(collapseType(group, "PENDING"), commonMeta),
-  failure: actionCreator<Failure<P, E>, M>(
-    collapseType(group, "FAILURE"),
-    commonMeta,
-    true
-  ),
-  success: actionCreator<Success<P, R>, M>(
-    collapseType(group, "SUCCESS"),
-    commonMeta
-  )
+  failure: actionCreator<Failure<P, E>, M>(collapseType(group, "FAILURE"), commonMeta, true),
+  success: actionCreator<Success<P, R>, M>(collapseType(group, "SUCCESS"), commonMeta)
 });
 
 /**
@@ -202,11 +188,7 @@ export const actionCreatorFactory = <G extends string, M extends Meta = Meta>(
   group: G,
   groupMeta?: M
 ): ActionCreatorBundle<G, M> => {
-  const simple = <P, M2 extends Meta = Meta>(
-    type: string,
-    defaultMeta?: M2,
-    error = false
-  ) =>
+  const simple = <P, M2 extends Meta = Meta>(type: string, defaultMeta?: M2, error = false) =>
     actionCreator<P, Partial<M> & M2>(
       collapseType(group, type),
       Object.assign({}, groupMeta, defaultMeta),

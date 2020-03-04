@@ -1,11 +1,10 @@
 import * as assert from "assert";
-import { of, throwError } from "rxjs";
-import { toArray, take, delay, tap } from "rxjs/operators";
+import { of, throwError, NEVER } from "rxjs";
+import { mergeMap, toArray, take, delay, tap, filter, mapTo } from "rxjs/operators";
 
 import * as S from "../src/Store";
 import * as R from "../src/Reducers";
 import * as A from "../src/Actions";
-import { Epic } from "../src/Epics";
 
 type Store = { count: number; meta?: string };
 const initStore: Store = { count: 0 };
@@ -28,11 +27,15 @@ const metaPropReducer = R.reducerFn<Store>(
   })
 );
 
-const pingEpic: Epic<any> = a => {
+const pingRunEvery: S.RunEvery<any> = a => {
   if (ping.match(a)) {
-    return pong();
+    return pong({});
   }
 };
+
+const neverRun = () => NEVER;
+
+const pingRunOnce: S.RunOnce<any> = a$ => a$.pipe(filter(ping.match), mapTo(pong(undefined)));
 
 const alterMetaReducer: S.MetaReducer<any> = r => (s, a) =>
   r(s, Object.assign(a, { meta: { from: "meta" } }));
@@ -43,12 +46,34 @@ describe("Store", () => {
       S.createStore({ count: 0 })
         .addReducers(countReducer)
         .addMetaReducers(alterMetaReducer)
-        .addEpics(pingEpic)
+        .addRunEverys(pingRunEvery)
+        .addRunOnces(pingRunOnce)
         .removeReducers(countReducer)
         .removeMetaReducers(alterMetaReducer)
-        .removeEpics(pingEpic);
-      // .destroy();
+        .removeRunEverys(pingRunEvery)
+        .removeRunOnces(pingRunOnce);
     });
+  });
+
+  it("destroys", done => {
+    const store = S.createStore({ count: 0 })
+      .addReducers(countReducer)
+      .addMetaReducers(alterMetaReducer)
+      .addRunEverys(pingRunEvery, neverRun)
+      .addRunOnces(pingRunOnce, neverRun);
+
+    store
+      .select(s => s.count)
+      .subscribe(x => {
+        if (x > 0) {
+          assert.fail("SHOULD NEVER CALL");
+        }
+      });
+    setTimeout(() => {
+      store.destroy();
+      store.dispatch(modify(1));
+      done();
+    }, 200);
   });
 
   it("counts", done => {
@@ -70,63 +95,85 @@ describe("Store", () => {
     store.dispatch(modify(1), modify(1));
   });
 
-  it("epics", done => {
-    const pingPongEpic: Epic<any> = (_, a) => {
+  it("runOnce", done => {
+    const doneRunOnce: S.RunOnce<any> = a$ =>
+      a$.pipe(
+        filter(pong.match),
+        tap(() => done()),
+        filter(() => false)
+      );
+    S.createStore({})
+      .addRunOnces(pingRunOnce, doneRunOnce)
+      .dispatch(ping(null));
+  });
+
+  it("runOnce handles errors", done => {
+    assert.doesNotThrow(() => {
+      const throwingRunOnce: S.RunOnce<any> = a$ =>
+        a$.pipe(mergeMap(() => throwError("YOU SHALL NOT PASS!")));
+      const store = S.createStore({}).addRunOnces(throwingRunOnce);
+      store.dispatch(ping(null));
+      setTimeout(() => {
+        store.dispatch(pong(null));
+        done();
+      }, 200);
+    });
+  });
+
+  it("runEvery", done => {
+    const pingPongEpic: S.RunEvery<any> = (_, a) => {
       if (ping.match(a)) {
-        return pong();
+        return pong(null);
       }
       if (pong.match(a)) {
         done();
       }
     };
     S.createStore({})
-      .addEpics(pingPongEpic)
-      .dispatch(ping());
+      .addRunEverys(pingPongEpic)
+      .dispatch(ping(null));
   });
 
-  it("cancels epics", done => {
-    const foreverEpic = () => of(pong()).pipe(delay(500), tap(assert.fail));
-    const store = S.createStore({}).addEpics(foreverEpic);
-    store.dispatch(ping());
+  it("cancels runEvery", done => {
+    const foreverEpic = () => of(pong(null)).pipe(delay(500), tap(assert.fail));
+    const store = S.createStore({}).addRunEverys(foreverEpic);
+    store.dispatch(ping(null));
     setTimeout(() => {
-      store.removeEpics(foreverEpic);
+      store.removeRunEverys(foreverEpic);
       done();
     }, 200);
   });
 
-  it("epics promises", done => {
-    const pingEpic: Epic<any> = async (_, a) => {
+  it("runEvery promises", done => {
+    const pingRunEvery: S.RunEvery<any> = async (_, a) => {
       if (ping.match(a)) {
-        return pong();
+        return pong(null);
       }
     };
-    const pongEpic: Epic<any> = async (_, a) => {
+    const pongEpic: S.RunEvery<any> = async (_, a) => {
       if (pong.match(a)) {
         done();
       }
     };
-    const store = S.createStore({}, console.log).addEpics(pingEpic, pongEpic);
-    store.dispatch(ping());
+    const store = S.createStore({}).addRunEverys(pingRunEvery, pongEpic);
+    store.dispatch(ping(null));
   });
 
-  it("handles rejecting epics", done => {
+  it("handles rejecting runEvery", done => {
     assert.doesNotThrow(() => {
-      const rejectEpic: Epic<any> = async () =>
-        Promise.reject("You shall not pass!");
-      const doneEpic: Epic<any> = (_, a) =>
-        pong.match(a) ? done() : undefined;
-      const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
-      store.dispatch(ping(), pong());
+      const rejectEpic: S.RunEvery<any> = async () => Promise.reject("You shall not pass!");
+      const doneEpic: S.RunEvery<any> = (_, a) => (pong.match(a) ? done() : undefined);
+      const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
+      store.dispatch(ping(null), pong(null));
     });
   });
 
-  it("handles throwError epics", done => {
+  it("handles throwError runEvery", done => {
     assert.doesNotThrow(() => {
-      const rejectEpic: Epic<any> = () => throwError("You shall not pass!");
-      const doneEpic: Epic<any> = (_, a) =>
-        pong.match(a) ? done() : undefined;
-      const store = S.createStore({}).addEpics(rejectEpic, doneEpic);
-      store.dispatch(ping(), pong());
+      const rejectEpic: S.RunEvery<any> = () => throwError("You shall not pass!");
+      const doneEpic: S.RunEvery<any> = (_, a) => (pong.match(a) ? done() : undefined);
+      const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
+      store.dispatch(ping(null), pong(null));
     });
   });
 
@@ -138,13 +185,9 @@ describe("Store", () => {
     store
       .select(s => s.meta)
       .pipe(take(3), toArray())
-      .subscribe(
-        n => assert.deepStrictEqual([undefined, "meta", "action"], n),
-        assert.fail,
-        done
-      );
+      .subscribe(n => assert.deepStrictEqual([undefined, "meta", "action"], n), assert.fail, done);
 
-    store.dispatch(ping());
+    store.dispatch(ping(null));
     store.removeMetaReducers(alterMetaReducer);
     store.dispatch(ping(null, { from: "action" }));
   });

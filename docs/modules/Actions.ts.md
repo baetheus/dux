@@ -137,7 +137,7 @@ Interface for metadata.
 **Signature**
 
 ```ts
-export type Meta = Readonly<{ [key: string]: any }>
+export type Meta = Record<string, any>
 ```
 
 Added in v5.0.0

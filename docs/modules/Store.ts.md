@@ -1,6 +1,6 @@
 ---
 title: Store.ts
-nav_order: 7
+nav_order: 6
 parent: Modules
 ---
 
@@ -8,13 +8,13 @@ parent: Modules
 
 Added in v8.0.0
 
-The @nll/dux store operates like redux with redux-observable.
-
 ---
 
 <h2 class="text-delta">Table of contents</h2>
 
 - [MetaReducer (type alias)](#metareducer-type-alias)
+- [RunEvery (type alias)](#runevery-type-alias)
+- [RunOnce (type alias)](#runonce-type-alias)
 - [Selector (type alias)](#selector-type-alias)
 - [StoreApi (type alias)](#storeapi-type-alias)
 - [createStore](#createstore)
@@ -44,6 +44,44 @@ export const loggingMetaReducer: MetaReducer<any> = reducer => {
     return state
   }
 }
+```
+
+Added in v8.0.0
+
+# RunEvery (type alias)
+
+An Epic encapsulates side effects or temporal changes for the store.
+It is given access to the current action and state, the action and
+state observables, and may return nothing, an action, a promise that
+contains an action, or an observable of actions.
+
+**Signature**
+
+```ts
+export type RunEvery<S> = (
+  state: S,
+  action: TypedAction
+) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void
+```
+
+**Example**
+
+```ts
+import { RunEvery } from '../../src/Store'
+
+export const logger: RunEvery<any> = (action, state) => {
+  console.log(`State after ${action.type} reduced:`, { state, action })
+}
+```
+
+Added in v8.0.0
+
+# RunOnce (type alias)
+
+**Signature**
+
+```ts
+export type RunOnce<S> = (actions$: Observable<TypedAction>, state$: Observable<S>) => Observable<TypedAction>
 ```
 
 Added in v8.0.0
@@ -85,9 +123,11 @@ export type StoreApi<S> = {
   removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>
   addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
   removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>
-  addEpics: (...epics: Epic<S>[]) => StoreApi<S>
-  removeEpics: (...epics: Epic<S>[]) => StoreApi<S>
-  select: <O>(selector: Selector<S, O>, predicate?: Eq<O>) => Observable<O>
+  addRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>
+  removeRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>
+  addRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>
+  removeRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>
+  select: <O>(selector: Selector<S, O>, predicate?: (a: O, b: O) => boolean) => Observable<O>
   dispatch: (...as: TypedAction[]) => void
   destroy: () => void
 }
@@ -113,10 +153,7 @@ The ordering of events in a running store is very specific:
 **Signature**
 
 ```ts
-export const createStore = <S>(
-  state: S,
-  onError: (...e: unknown[]) => void = ON_ERROR
-): StoreApi<S> => ...
+export const createStore = <S>(state: S): StoreApi<S> => ...
 ```
 
 **Example**

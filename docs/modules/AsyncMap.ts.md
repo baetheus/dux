@@ -28,7 +28,7 @@ Wraps an asyncAction in a concatMap
 **Signature**
 
 ```ts
-export const asyncConcatMap: <P, R, E, M extends Readonly<{ [key: string]: any; }>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export const asyncConcatMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
 ```
 
 Added in v5.0.0
@@ -40,7 +40,7 @@ Wraps an asyncAction in an exhaustMap
 **Signature**
 
 ```ts
-export const asyncExhaustMap: <P, R, E, M extends Readonly<{ [key: string]: any; }>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export const asyncExhaustMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
 ```
 
 Added in v5.0.0
@@ -52,7 +52,7 @@ Wraps an asyncAction in a mergeMap
 **Signature**
 
 ```ts
-export const asyncMergeMap: <P, R, E, M extends Readonly<{ [key: string]: any; }>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export const asyncMergeMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
 ```
 
 Added in v5.0.0
@@ -64,7 +64,7 @@ Wraps an asyncAction in a switchMap
 **Signature**
 
 ```ts
-export const asyncSwitchMap: <P, R, E, M extends Readonly<{ [key: string]: any; }>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export const asyncSwitchMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
 ```
 
 Added in v5.0.0

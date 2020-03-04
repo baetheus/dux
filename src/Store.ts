@@ -1,22 +1,15 @@
 /**
  * @since 8.0.0
  *
+ * @todo
+ * * Look into more obvious and useful error handling.
+ *
  * The @nll/dux store operates like redux with redux-observable.
  */
 
 import { Reducer } from "./Reducers";
 import { TypedAction } from "./Actions";
-import { Epic } from "./Epics";
-import {
-  BehaviorSubject,
-  EMPTY,
-  from,
-  isObservable,
-  Observable,
-  of,
-  Subject,
-  Subscription
-} from "rxjs";
+import { BehaviorSubject, EMPTY, from, isObservable, Observable, of, Subject } from "rxjs";
 import {
   catchError,
   distinctUntilChanged,
@@ -30,62 +23,72 @@ import {
 /**
  * Utility Types and Functions.
  */
-type Eq<S> = (a: S, b: S) => boolean;
-
 const objEq = <T>(a: T, b: T): boolean => a === b;
 const objEqC = <T>(a: T) => (b: T) => a === b;
 const isIn = <T>(as: T[]) => (b: T) => as.some(objEqC(b));
 const isNotIn = <T>(as: T[]) => (b: T) => !isIn(as)(b);
-const isNotNil = <T>(t?: T | undefined | null | void): t is T =>
-  t !== undefined && t !== null;
-const ON_ERROR = () => {};
+const isNotNil = <T>(t?: T | undefined | null | void): t is T => t !== undefined && t !== null;
 
 /**
- * The store API.
- *
- * @since 8.0.0
- */
-export type StoreApi<S> = {
-  getState: () => S;
-  setState: (s: S) => void;
-  addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
-  removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
-  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
-  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
-  addEpics: (...epics: Epic<S>[]) => StoreApi<S>;
-  removeEpics: (...epics: Epic<S>[]) => StoreApi<S>;
-  select: <O>(selector: Selector<S, O>, predicate?: Eq<O>) => Observable<O>;
-  dispatch: (...as: TypedAction[]) => void;
-  destroy: () => void;
-};
-
-/**
- * wrapEpic cleans up epic responses
- * * Forces all epics to be async via Promise.resolve
- * * Catches any epics that sync output Promise.reject
+ * wrapEvery cleans up every responses
+ * * Forces all everys to be async via Promise.resolve
+ * * Catches any everys that sync output Promise.reject
  * * Filters null/undefined/void outputs
  * * Catches any observables that drop to error channel
  * * Filters null/undefined/void events in observables
  */
-const wrapEpic = <S>(
+const wrapEvery = <S>(
   state: S,
   action: TypedAction,
-  epic: Epic<S>,
-  onError: (...e: unknown[]) => void
+  every: RunEvery<S>
 ): Observable<TypedAction> => {
-  let epicResult = Promise.resolve(epic(state, action))
-    .catch(error => onError("Error on Promise.resolve", error))
+  let everyResult = Promise.resolve(every(state, action))
+    .catch(error => undefined)
     .then(res => (isNotNil(res) ? res : EMPTY))
     .then(res => (isObservable(res) ? res : of(res)));
-  return from(epicResult).pipe(
+  return from(everyResult).pipe(
     mergeAll(),
-    catchError(error => {
-      onError(error);
-      return EMPTY;
-    }),
+    catchError(() => EMPTY),
     filter(isNotNil)
   );
 };
+
+/**
+ * wrapOnce cleans up once responses
+ */
+const wrapOnce = <S>(
+  actions$: Observable<TypedAction>,
+  state$: Observable<S>,
+  once: RunOnce<S>
+): Observable<TypedAction> => once(actions$, state$).pipe(catchError(() => EMPTY));
+
+/**
+ * @since 8.0.0
+ */
+export type RunOnce<S> = (
+  actions$: Observable<TypedAction>,
+  state$: Observable<S>
+) => Observable<TypedAction>;
+
+/**
+ * An Epic encapsulates side effects or temporal changes for the store.
+ * It is given access to the current action and state, the action and
+ * state observables, and may return nothing, an action, a promise that
+ * contains an action, or an observable of actions.
+ *
+ * @example
+ * import { RunEvery } from "../../src/Store";
+ *
+ * export const logger: RunEvery<any> = (action, state) => {
+ *     console.log(`State after ${action.type} reduced:`, { state, action });
+ * }
+ *
+ * @since 8.0.0
+ */
+export type RunEvery<S> = (
+  state: S,
+  action: TypedAction
+) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void;
 
 /**
  * A MetaReducer is a function that takes a reducer and returns a reducer. It's useful
@@ -126,6 +129,27 @@ export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>;
 export type Selector<S, O> = (state: S) => O;
 
 /**
+ * The store API.
+ *
+ * @since 8.0.0
+ */
+export type StoreApi<S> = {
+  getState: () => S;
+  setState: (s: S) => void;
+  addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
+  removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
+  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
+  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
+  addRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>;
+  removeRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>;
+  addRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>;
+  removeRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>;
+  select: <O>(selector: Selector<S, O>, predicate?: (a: O, b: O) => boolean) => Observable<O>;
+  dispatch: (...as: TypedAction[]) => void;
+  destroy: () => void;
+};
+
+/**
  * While the redux pattern is powerful, it is also painful to instrument. This implementation
  * of the redux pattern combines redux-observable and a more flexible interface for adding
  * and removed reducers, metareducers(middleware), and epics.
@@ -150,40 +174,51 @@ export type Selector<S, O> = (state: S) => O;
  *
  * @since 8.0.0
  */
-export const createStore = <S>(
-  state: S,
-  onError: (...e: unknown[]) => void = ON_ERROR
-): StoreApi<S> => {
-  const state$ = new BehaviorSubject(state);
+export const createStore = <S>(state: S): StoreApi<S> => {
+  const everyRemoval$ = new Subject<RunEvery<S>>();
+  const onceRemoval$ = new Subject<RunOnce<S>>();
   const actions$ = new Subject<TypedAction>();
-  const epicRemoval$ = new Subject<Epic<S>>();
-  const subscriptions = new WeakSet<Subscription>();
+  const state$ = new BehaviorSubject(state);
 
-  let epics: Epic<S>[] = [];
   let metaReducers: MetaReducer<S>[] = [];
   let reducers: Reducer<S>[] = [];
+  let everys: RunEvery<S>[] = [];
+  let onces: RunOnce<S>[] = [];
 
   const runReducer: Reducer<S> = (state, action) => {
-    const reducer: Reducer<S> = (s, a) =>
-      reducers.reduce((_s, r) => r(_s, a), s);
-    return metaReducers.reduce((r, m) => m(r), reducer)(state, action);
+    const reducer: Reducer<S> = (s, a) => reducers.reduce((_s, r) => r(_s, a), s);
+    const metaReducer = metaReducers.reduce((r, m) => m(r), reducer);
+    return metaReducer(state, action);
   };
 
-  const runEpics = (state: S, action: TypedAction): void => {
-    epics.forEach(epic => {
-      const epicReturn = wrapEpic(state, action, epic, onError);
-      const epicSub = epicReturn
-        .pipe(takeUntil(epicRemoval$.pipe(filter(objEqC(epic)))))
-        .subscribe(next => actions$.next(next), onError);
-      subscriptions.add(epicSub);
+  const runEverys = (state: S, action: TypedAction): void => {
+    everys.forEach(every => {
+      wrapEvery(state, action, every)
+        .pipe(takeUntil(everyRemoval$.pipe(filter(objEqC(every)))))
+        .subscribe(actions$);
+    });
+  };
+
+  const runOnces = (onces: RunOnce<S>[]): void => {
+    onces.forEach(once => {
+      wrapOnce(actions$, state$, once)
+        .pipe(takeUntil(onceRemoval$.pipe(filter(objEqC(once)))))
+        .subscribe(actions$);
     });
   };
 
   const run = (state: S, action: TypedAction): void => {
     const nextState = runReducer(state, action);
     state$.next(nextState);
-    runEpics(nextState, action);
+    runEverys(nextState, action);
   };
+
+  /**
+   * Wireup State
+   */
+  const runSub = actions$
+    .pipe(withLatestFrom(state$))
+    .subscribe(([action, state]) => run(state, action));
 
   /**
    * External API
@@ -208,33 +243,38 @@ export const createStore = <S>(
       metaReducers = metaReducers.filter(isNotIn(mrs));
       return store;
     },
-    addEpics: (...es) => {
-      epics = epics.concat(es);
+    addRunEverys: (...es) => {
+      everys = everys.concat(es);
       return store;
     },
-    removeEpics: (...es) => {
-      epics = epics.filter(isNotIn(es));
-      es.forEach(epic => epicRemoval$.next(epic));
+    removeRunEverys: (...es) => {
+      everys = everys.filter(isNotIn(es));
+      es.forEach(every => everyRemoval$.next(every));
+      return store;
+    },
+    addRunOnces: (...os) => {
+      onces = onces.concat(os);
+      runOnces(os);
+      return store;
+    },
+    removeRunOnces: (...os) => {
+      onces = onces.filter(isNotIn(os));
+      os.forEach(once => onceRemoval$.next(once));
       return store;
     },
     select: (selector, predicate = objEq) =>
       state$.pipe(map(selector), distinctUntilChanged(predicate)),
     dispatch: (...as) => as.forEach(a => actions$.next(a)),
     destroy: () => {
-      epicRemoval$.complete();
+      runSub.unsubscribe();
+      everys.forEach(every => everyRemoval$.next(every));
+      onces.forEach(once => onceRemoval$.next(once));
+      everyRemoval$.complete();
+      onceRemoval$.complete();
       actions$.complete();
       state$.complete();
     }
   };
-
-  /**
-   * Wireup State
-   */
-  subscriptions.add(
-    actions$
-      .pipe(withLatestFrom(state$))
-      .subscribe(([action, state]) => run(state, action), onError)
-  );
 
   return store;
 };
