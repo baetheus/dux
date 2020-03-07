@@ -1,14 +1,14 @@
 ---
 title: Reducers.ts
-nav_order: 5
+nav_order: 4
 parent: Modules
 ---
 
 # Reducers overview
 
-Added in v5.0.0
+Utility functions for filtering and combining reducers
 
-Reducer types and reducer factories
+Added in v5.0.0
 
 ---
 
@@ -134,10 +134,10 @@ Compose caseFn and casesFn.
 **Signature**
 
 ```ts
-export const reducerFn = <S>(
-  ...cases: Array<Reducer<S, TypedAction>>
-): Reducer<S, TypedAction> => (state, action) =>
-  cases.reduce((s, r) => ...
+export const reducerFn = <S>(...cases: Array<Reducer<S, TypedAction>>): Reducer<S, TypedAction> => (
+  state,
+  action
+) => cases.reduce((s, r) => ...
 ```
 
 Added in v5.0.0

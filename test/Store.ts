@@ -218,4 +218,16 @@ describe("Store", () => {
       done();
     }, 200);
   });
+
+  it("predicate select", done => {
+    const store = S.createStore({ count: 0 }).addReducers(countReducer);
+    store
+      .select(
+        s => s.count,
+        () => false
+      )
+      .pipe(take(3), toArray())
+      .subscribe(result => assert.deepStrictEqual([0, 0, 0], result), assert.fail, done);
+    store.dispatch(modify(0), modify(0));
+  });
 });

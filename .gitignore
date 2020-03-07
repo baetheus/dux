@@ -2,6 +2,27 @@
 .rpt2_cache
 lib
 es6
+Actions.d.ts
+Actions.js
+Actions.js.map
+AsyncMap.d.ts
+AsyncMap.js
+AsyncMap.js.map
+FilterActions.d.ts
+FilterActions.js
+FilterActions.js.map
+MapAction.d.ts
+MapAction.js
+MapAction.js.map
+React.d.ts
+React.js
+React.js.map
+Reducers.d.ts
+Reducers.js
+Reducers.js.map
+Store.d.ts
+Store.js
+Store.js.map
 
 # deps
 node_modules

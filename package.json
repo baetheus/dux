@@ -2,23 +2,21 @@
   "name": "@nll/dux",
   "version": "8.0.0-prerelease.5",
   "description": "Flux and flux-like tools",
-  "main": "lib/index.js",
-  "module": "es6/index.js",
+  "private": true,
+  "sideEffects": false,
   "files": [
-    "lib",
-    "es6",
-    "src"
+    "*"
   ],
   "scripts": {
-    "build-es6": "tsc",
-    "build-lib": "tsc --build tsconfig.lib.json",
-    "build": "npm run build-es6 && npm run build-lib",
-    "coveralls": "cat ./coverage/lcov.info | npx coveralls",
+    "build-tsc": "tsc --build tsconfig.build.json",
+    "build-prepare": "ts-node ./scripts/prepare.ts",
+    "build-notify": "echo 'To publish run: npm publish --prefix 'dist''",
+    "build": "npm run test && npm run docs && npm run build-tsc && npm run build-prepare && npm run build-notify",
     "docs": "npx docs-ts",
     "jest-clear-cache": "jest --clearCache",
     "jest": "jest --ci",
-    "prepublishOnly": "npm run build",
-    "release": "npm run test && npm run build && npm run docs && npx standard-version",
+    "coveralls": "cat ./coverage/lcov.info | npx coveralls",
+    "release": "npx standard-version && npm run build",
     "test": "npm run jest-clear-cache && npm run jest"
   },
   "repository": {
@@ -37,20 +35,24 @@
   },
   "homepage": "https://github.com/nullpub/dux#readme",
   "dependencies": {
-    "@nll/datum": "~2.7.1",
-    "fp-ts": "~2.5.2",
-    "monocle-ts": "~2.1.0",
-    "rxjs": "~6.5.4"
+    "@nll/datum": "^3.0.1",
+    "fp-ts": "^2.5.2",
+    "monocle-ts": "^2.1.0",
+    "rxjs": "^6.5.4"
   },
   "devDependencies": {
-    "@types/jest": "~25.1.3",
-    "@types/node": "~12.12.28",
-    "coveralls": "~3.0.9",
-    "docs-ts": "~0.3.4",
-    "jest": "~25.1.0",
-    "prettier": "~1.19.1",
-    "standard-version": "~7.1.0",
-    "ts-jest": "~25.0.0",
-    "typescript": "~3.8.2"
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^13.7.7",
+    "babel-jest": "^25.1.0",
+    "coveralls": "^3.0.9",
+    "docs-ts": "^0.3.1",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "standard-version": "^7.1.0",
+    "ts-jest": "^25.0.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
   }
 }

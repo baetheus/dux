@@ -1,17 +1,11 @@
 /**
- * @since 5.0.0
+ * Utility functions for filtering and combining reducers
  *
- * Reducer types and reducer factories
+ * @since 5.0.0
  */
 
-import {
-  DatumEither,
-  failure,
-  initial,
-  success,
-  toRefresh
-} from "@nll/datum/lib/DatumEither";
-import { Lens } from "monocle-ts";
+import { DatumEither, failure, initial, success, toRefresh } from "@nll/datum/DatumEither";
+import { Lens } from "monocle-ts/es6";
 
 import {
   Action,
@@ -48,19 +42,17 @@ export const casesFn = <S, A extends ActionCreator<any, any>[]>(
   actionCreators: A,
   reducer: Reducer<S, ExtractAction<A>>
 ): Reducer<S, TypedAction> => (s, a) =>
-  actionCreators.some(({ match }) => match(a))
-    ? reducer(s, <ExtractAction<A>>a)
-    : s;
+  actionCreators.some(({ match }) => match(a)) ? reducer(s, <ExtractAction<A>>a) : s;
 
 /**
  * Compose caseFn and casesFn.
  *
  * @since 5.0.0
  */
-export const reducerFn = <S>(
-  ...cases: Array<Reducer<S, TypedAction>>
-): Reducer<S, TypedAction> => (state, action) =>
-  cases.reduce((s, r) => r(s, action), state);
+export const reducerFn = <S>(...cases: Array<Reducer<S, TypedAction>>): Reducer<S, TypedAction> => (
+  state,
+  action
+) => cases.reduce((s, r) => r(s, action), state);
 
 /**
  * Compose caseFn and casesFn with initial state.
@@ -96,10 +88,8 @@ type AsyncEntityFactory = <P, R, E, S>(
   i: Lens<P, string>
 ) => Reducer<S, TypedAction>;
 
-const composeRecord = <S, T, K extends keyof T>(
-  lens: Lens<S, T>,
-  def: T[K]
-) => (id: K) => lens.compose(Lens.fromNullableProp<T>()(id, def));
+const composeRecord = <S, T, K extends keyof T>(lens: Lens<S, T>, def: T[K]) => (id: K) =>
+  lens.compose(Lens.fromNullableProp<T>()(id, def));
 
 /**
  * Generate a reducer that handles a record of multiple DatumEither store values
@@ -109,9 +99,7 @@ const composeRecord = <S, T, K extends keyof T>(
 export const asyncEntityFactory: AsyncEntityFactory = (action, lens, toId) => {
   const idLens = composeRecord(lens, initial);
   return reducerFn(
-    caseFn(action.pending, (s, a) =>
-      idLens(toId.get(a.value)).modify(toRefresh)(s)
-    ),
+    caseFn(action.pending, (s, a) => idLens(toId.get(a.value)).modify(toRefresh)(s)),
     caseFn(action.success, (s, a) =>
       idLens(toId.get(a.value.params)).set(success(a.value.result))(s)
     ),
