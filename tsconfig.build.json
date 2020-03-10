@@ -1,21 +1,6 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "allowUnreachableCode": true,
-    "alwaysStrict": true,
-    "strict": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "noErrorTruncation": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "lib": ["es2015"],
-
     "declaration": true,
     "declarationDir": "./dist",
     "outDir": "./dist",
