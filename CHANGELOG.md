@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.5...v8.0.0) (2020-03-10)
+
+
+### Features
+
+* consolidation and React ([76b4e49](https://github.com/nullpub/dux/commit/76b4e49e2938903aa89afb6d3083f4c584e0008a))
+
 ## [8.0.0-prerelease.5](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.4...v8.0.0-prerelease.5) (2020-03-04)
 
 
