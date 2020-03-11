@@ -1,6 +1,6 @@
 import { DatumEither, failure, initial, pending, success, toRefresh } from "@nll/datum/DatumEither";
 import * as assert from "assert";
-import { Lens } from "monocle-ts/es6";
+import { Lens } from "monocle-ts";
 
 import { actionCreatorFactory } from "../src/Actions";
 import * as R from "../src/Reducers";

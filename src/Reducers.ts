@@ -5,7 +5,7 @@
  */
 
 import { DatumEither, failure, initial, success, toRefresh } from "@nll/datum/DatumEither";
-import { Lens } from "monocle-ts/es6";
+import { Lens } from "monocle-ts";
 
 import {
   Action,
