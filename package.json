@@ -1,6 +1,6 @@
 {
   "name": "@nll/dux",
-  "version": "8.1.0-prerelease.2",
+  "version": "8.1.0",
   "description": "Flux and flux-like tools",
   "private": true,
   "sideEffects": false,
@@ -10,7 +10,7 @@
   "scripts": {
     "build-tsc": "tsc --build tsconfig.build.json",
     "build-prepare": "ts-node ./scripts/prepare.ts",
-    "build-notify": "echo 'To publish run: npm publish --prefix 'dist''",
+    "build-notify": "echo 'To publish run: cd dist; npm publish'",
     "build": "npm run test && npm run docs && npm run build-tsc && npm run build-prepare && npm run build-notify",
     "docs": "npx docs-ts",
     "jest-clear-cache": "jest --clearCache",
@@ -36,7 +36,6 @@
   "homepage": "https://github.com/nullpub/dux#readme",
   "dependencies": {
     "@nll/datum": "^3.0.2",
-    "fp-ts": "^2.0.0",
     "monocle-ts": "^2.0.0",
     "rxjs": "^6.0.0"
   },
