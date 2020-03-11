@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.1-prerelease.1](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.0...v8.1.1-prerelease.1) (2020-03-11)
+
+
+### Bug Fixes
+
+* change monocle-ts imports, remove fp-ts dep ([d95362e](https://github.com/nullpub/dux/commit/d95362e6ee7d45555f0c2b860cdd00a76c44effa))
+
 ### [8.1.1-prerelease.0](https://github.com/nullpub/dux/compare/v8.1.0-prerelease.2...v8.1.1-prerelease.0) (2020-03-11)
 
 ## [8.1.0](https://github.com/nullpub/dux/compare/v8.1.0-prerelease.2...v8.1.0) (2020-03-11)
