@@ -8,10 +8,11 @@
     "*"
   ],
   "scripts": {
+    "build-clean": "rm -rf dist coverage",
     "build-tsc": "tsc --build tsconfig.build.json",
     "build-prepare": "ts-node ./scripts/prepare.ts",
     "build-notify": "echo 'To publish run: cd dist; npm publish'",
-    "build": "npm run test && npm run docs && npm run build-tsc && npm run build-prepare && npm run build-notify",
+    "build": "npm run build-clean && npm run test && npm run docs && npm run build-tsc && npm run build-prepare && npm run build-notify",
     "docs": "npx docs-ts",
     "jest-clear-cache": "jest --clearCache",
     "jest": "jest --ci",
