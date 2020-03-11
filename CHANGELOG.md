@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.1.0-prerelease.2](https://github.com/nullpub/dux/compare/v8.1.0-prerelease.1...v8.1.0-prerelease.2) (2020-03-11)
+
 ## [8.1.0-prerelease.1](https://github.com/nullpub/dux/compare/v8.1.0-prerelease.0...v8.1.0-prerelease.1) (2020-03-11)
 
 ## [8.1.0-prerelease.0](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.5...v8.1.0-prerelease.0) (2020-03-10)
