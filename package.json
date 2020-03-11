@@ -1,6 +1,6 @@
 {
   "name": "@nll/dux",
-  "version": "8.1.0-prerelease.0",
+  "version": "8.1.0-prerelease.1",
   "description": "Flux and flux-like tools",
   "private": true,
   "sideEffects": false,
@@ -16,7 +16,7 @@
     "jest-clear-cache": "jest --clearCache",
     "jest": "jest --ci",
     "coveralls": "cat ./coverage/lcov.info | npx coveralls",
-    "release": "npx standard-version && npm run build",
+    "release": "npx standard-version",
     "test": "npm run jest-clear-cache && npm run jest"
   },
   "repository": {
@@ -35,10 +35,10 @@
   },
   "homepage": "https://github.com/nullpub/dux#readme",
   "dependencies": {
-    "@nll/datum": "^3.0.1",
-    "fp-ts": "^2.5.2",
-    "monocle-ts": "^2.1.0",
-    "rxjs": "^6.5.4"
+    "@nll/datum": "^3.0.2",
+    "fp-ts": "^2.0.0",
+    "monocle-ts": "^2.0.0",
+    "rxjs": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
