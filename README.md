@@ -28,7 +28,7 @@
 
 # @nll/dux
 
-Flux and flux-like utilities, written in typescript with the twin goals of type safety and massive boilerplate reduction
+State management, batteries included. In version 8.0.0 @nll/dux is releasing its own [Store](https://nullpub.github.io/dux/modules/Store.ts.html) that uses [rxjs](https://github.com/ReactiveX/rxjs) under the hood. The goal is to create a simple cross-framework state management system that is flexible enough to replace redux, ngrx, akita, or flux.
 
 ## Installation
 
@@ -36,34 +36,105 @@ Flux and flux-like utilities, written in typescript with the twin goals of type 
 npm i @nll/dux
 ```
 
-To use async reducer factories you'll also need [monocle-ts](https://github.com/gcanti/monocle-ts), [fp-ts](https://github.com/gcanti/fp-ts) and [@nll/datum](https://github.com/nullpub/datum)
-
-```bash
-npm i monocle-ts fp-ts @nll/datum
-```
-
-To use some of the rxjs operators you'll need [rxjs](https://github.com/ReactiveX/rxjs)
-
-```bash
-npm i rxjs
-```
-
-If you plan on using everything here is the copypasta
-
-```bash
-npm i @nll/dux @nll/datum monocle-ts fp-ts rxjs
-```
-
 ## Documentation
 
-- [Action Factories](https://nullpub.github.io/dux/modules/Actions.ts.html)
-- [Reducer Factories](https://nullpub.github.io/dux/modules/Reducers.ts.html)
-- [Effects Factories](https://nullpub.github.io/dux/modules/Effects.ts.html)
-- [Rxjs AsyncMap Action Operators](https://nullpub.github.io/dux/modules/AsyncMap.ts.html)
-- [Rxjs Filter Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
-- [Rxjs Map Action Operators](https://nullpub.github.io/dux/modules/FilterActions.ts.html)
+@nll/dux is modular by default. The core modules are:
 
-## Usage
+- [Store](https://nullpub.github.io/dux/modules/Store.ts.html)
+- [Actions](https://nullpub.github.io/dux/modules/Actions.ts.html)
+- [Reducers](https://nullpub.github.io/dux/modules/Reducers.ts.html)
+
+Additionally, there are modules for use with advanced side effect management and specific frameworks:
+
+- [Operators](https://nullpub.github.io/dux/modules/Operators.ts.html)
+- [Angular](https://nullpub.github.io/dux/modules/Angular.ts.html)
+- [React](https://nullpub.github.io/dux/modules/React.ts.html)
+
+## Core Concepts
+
+If you've used redux, ngrx, or flux, @nll/dux/Store will be very familiar. If not, here is a primer on some simple usage.
+
+### Store
+
+A store manages some stateful data. For the most basic case it's not necessary to use reducers or actions.
+
+#### Basic Get/Set Store
+
+```typescript
+import { createStore } from "@nll/dux/Store";
+
+type State = { count: number };
+const initialState: State = { count: 0 };
+
+const store = createStore(initialState);
+
+console.log(store.getState()); // { count: 0 }
+store.setState({ count: 1 });
+console.log(store.getState()); // { count: 1 }
+```
+
+#### Make it Reactive
+
+Since reactivity is all the rage, let's listen to our store.
+
+```typescript
+import { createStore } from "@nll/dux/Store";
+
+type State = { count: number };
+const initialState: State = { count: 0 };
+
+const store = createStore(initialState);
+
+store.select(state => state.count).subscribe(x => console.log(`The count is ${x}!`));
+
+store.setState({ count: 1 });
+
+// Logs:
+// "The count is 0!"
+// "The count is 1!"
+```
+
+Notice that subscribing to the store will always output the initial state!
+
+#### Ok, but how is this better than just using an rxjs Subject?
+
+It's not! So let's make it more useful with actions and reducers.
+
+```typescript
+import { createStore } from "@nll/dux/Store";
+import { reducerFn, caseFn } from "@nll/dux/Reducers";
+import { actionFactory } from "@nll/dux/Actions";
+
+// Let's define a type to represent state, as well as an initial state.
+type State = { count: number };
+const initialState: State = { count: 0 };
+
+// Create Some Actions using the simplest actionFactory
+const increment = actionFactory<number>("INCREMENT");
+const reset = actionFactory("RESET");
+
+// Create a "combined" reducer to handle those actions
+const reducer = reducerFn<State>(
+  caseFn(increment, (state, { value }) => ({ count: state.count + value })),
+  caseFn(reset, () => initialState)
+);
+
+// Setup the Store
+const store = createStore(initialState).addReducers(reducer);
+
+// Subscribe to the count
+store.select(state => state.count).subscribe(x => console.log(`The count is ${x}!`));
+
+// Dispatch some actions
+store.dispatch(increment(1), increment(2), increment(-10), reset());
+
+// Logs:
+// "The count is 0!"
+// "The count is 1!"
+// "The count is 3!"
+// "The count is -7!"
+// "The count is 0!"
+```
 
 ### Action Creators
 
@@ -315,8 +386,10 @@ import { pending } from "@nll/datum/Datum";
 import { DatumEither, initial, success } from "@nll/datum/DatumEither";
 import { asyncActionCreators } from "@nll/dux/Actions";
 import { asyncEntityReducer } from "@nll/dux/Reducers";
+import { createStore } from "@nll/dux/Store";
 import * as assert from "assert";
 import { Lens } from "monocle-ts";
+import { take, toArray } from "rxjs/operators";
 
 type State = {
   apiDatas: Record<string, DatumEither<string, number>>;
@@ -335,20 +408,33 @@ const idLens = new Lens(
 );
 
 const apiDataReducer = asyncEntityReducer(getApiData, apiDataLens, idLens);
+const store = createStore(INITIAL_STATE).addReducers(apiDataReducer);
 
-assert.deepStrictEqual(apiDataReducer(INITIAL_STATE, getApiData.pending(1)), {
-  apiDatas: {
-    "1": pending
-  }
-});
-assert.deepStrictEqual(
-  apiDataReducer(INITIAL_STATE, getApiData.success({ params: 1, result: 20 })),
-  {
-    apiDatas: {
-      "1": success(20)
-    }
-  }
-);
+// Test changes to the store.
+store
+  .select(s => s)
+  .pipe(take(3), toArray())
+  .subscribe(states =>
+    assert.deepStrictEqual(states, [
+      {
+        apiDatas: {
+          "1": initial
+        }
+      },
+      {
+        apiDatas: {
+          "1": pending
+        }
+      },
+      {
+        apiDatas: {
+          "1": success(20)
+        }
+      }
+    ])
+  );
+
+store.dispatch(getApiData.pending(1), getApiData.success({ params: 1, result: 20 }));
 ```
 
 At this point let's list what we've achieved:
