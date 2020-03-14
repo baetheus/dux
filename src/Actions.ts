@@ -70,13 +70,20 @@ type ActionMatcher<P, M> = {
 type ActionFunction<P, M extends Meta = Meta> = (payload: P, meta?: M) => Action<P, M>;
 
 /**
+ * Interface for action creator tag
+ *
+ * @since 8.2.0
+ */
+type ActionTag = { readonly tag: string };
+
+/**
  * Interface for action creator intersection
  *
  * @since 5.0.0
  */
-export type ActionCreator<P, M extends Meta = Meta> = TypedAction &
+export type ActionCreator<P, M extends Meta = Meta> = ActionFunction<P, M> &
   ActionMatcher<P, M> &
-  ActionFunction<P, M>;
+  ActionTag;
 
 /**
  * Extract an Action type from an ActionCreator
@@ -126,8 +133,8 @@ const matcherFactory = <P, M>(type: string): ActionMatcher<P, M> => ({
   match: (action: TypedAction): action is Action<P, M> => action.type === type
 });
 
-const typeFactory = (...types: string[]): TypedAction => ({
-  type: collapseType(...types)
+const tagFactory = (...tags: string[]): ActionTag => ({
+  tag: collapseType(...tags)
 });
 
 /**
@@ -155,14 +162,14 @@ export const actionFactory = <P, M extends Meta = Meta>(
  * @since 5.0.0
  */
 const actionCreator = <P, M extends Meta = Meta>(
-  type: string,
+  tag: string,
   commonMeta?: M,
   error = false
 ): ActionCreator<P, M> =>
   Object.assign(
-    actionFactory<P, M>(type, commonMeta, error),
-    typeFactory(type),
-    matcherFactory<P, M>(type)
+    actionFactory<P, M>(tag, commonMeta, error),
+    matcherFactory<P, M>(tag),
+    tagFactory(tag)
   );
 
 /**

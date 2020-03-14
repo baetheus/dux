@@ -113,7 +113,7 @@ Interface for action creator intersection
 **Signature**
 
 ```ts
-export type ActionCreator<P, M extends Meta = Meta> = TypedAction & ActionMatcher<P, M> & ActionFunction<P, M>
+export type ActionCreator<P, M extends Meta = Meta> = ActionFunction<P, M> & ActionMatcher<P, M> & ActionTag
 ```
 
 Added in v5.0.0

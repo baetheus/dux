@@ -1,6 +1,16 @@
 import * as assert from "assert";
-import { of, throwError, NEVER } from "rxjs";
-import { mergeMap, toArray, take, delay, tap, filter, mapTo } from "rxjs/operators";
+import { of, throwError, NEVER, EMPTY, Observable } from "rxjs";
+import {
+  mergeMap,
+  toArray,
+  take,
+  delay,
+  tap,
+  filter,
+  mapTo,
+  withLatestFrom,
+  mergeMapTo
+} from "rxjs/operators";
 
 import * as S from "../src/Store";
 import * as R from "../src/Reducers";
@@ -8,6 +18,7 @@ import * as A from "../src/Actions";
 
 type Store = { count: number; meta?: string };
 const initStore: Store = { count: 0 };
+const ACTION$: Observable<A.TypedAction> = EMPTY;
 
 const { simple } = A.actionCreatorFactory("TEST");
 const ping = simple("PING");
@@ -105,6 +116,37 @@ describe("Store", () => {
     S.createStore({})
       .addRunOnces(pingRunOnce, doneRunOnce)
       .dispatch(ping(null));
+  });
+
+  it("runOnce has correct order", done => {
+    const modifyCheck: S.RunOnce<{ count: number }> = (a$, s$) =>
+      a$.pipe(
+        filter(modify.match),
+        withLatestFrom(s$),
+        tap(([a, s]) => {
+          switch (a.value) {
+            case 1:
+              assert.deepStrictEqual(s, { count: 1 });
+              break;
+            case 2:
+              assert.deepStrictEqual(s, { count: 2 });
+              break;
+          }
+        }),
+        mergeMapTo(ACTION$)
+      );
+    const store = S.createStore({ count: 0 })
+      .addReducers(countReducer)
+      .addRunOnces(modifyCheck);
+    store.dispatch(modify(1), reset(null), modify(2), reset(null), modify(100));
+    store
+      .select(s => s.count)
+      .subscribe(c => {
+        if (c === 100) {
+          store.destroy();
+          done();
+        }
+      });
   });
 
   it("runOnce handles errors", done => {
@@ -232,10 +274,11 @@ describe("Store", () => {
   });
 
   it("filterEvery", () => {
-    const assertModify = S.filterEvery(modify, (_, a) => {
-      assert.deepStrictEqual(a, modify(a.value));
-    });
-    const store = S.createStore({}).addRunEverys(assertModify);
+    const store = S.createStore({ count: 0 }).addRunEverys(
+      S.filterEvery(modify, (_, a) => {
+        assert.deepStrictEqual(a, modify(a.value));
+      })
+    );
     store.dispatch(modify(1), pong(null), modify(2));
   });
 });

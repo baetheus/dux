@@ -148,8 +148,8 @@ describe("Reducers", () => {
 
     const filterGroup1 = R.filterReducer(group1.group, casesFn);
     const filterGroup2 = R.filterReducer(group2.group, casesFn);
-    const filterAction1 = R.filterReducer(action1.type, casesFn);
-    const filterAction2 = R.filterReducer(action2.type, casesFn);
+    const filterAction1 = R.filterReducer(action1.tag, casesFn);
+    const filterAction2 = R.filterReducer(action2.tag, casesFn);
 
     assert.deepStrictEqual(filterGroup1(0, action1(1)), 1);
     assert.deepStrictEqual(filterGroup1(0, action2(1)), 0);
