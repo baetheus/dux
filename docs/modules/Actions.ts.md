@@ -51,7 +51,7 @@ Interface for async action creator
 **Signature**
 
 ```ts
-export interface AsyncActionCreators<P = unknown, R = unknown, E = unknown, M extends Meta = Meta> {
+export interface AsyncActionCreators<P, R = unknown, E = unknown, M extends Meta = Meta> {
   readonly pending: ActionCreator<P, M>
   readonly success: ActionCreator<Success<P, R>, M>
   readonly failure: ActionCreator<Failure<P, E>, M>
@@ -113,7 +113,7 @@ Interface for action creator intersection
 **Signature**
 
 ```ts
-export type ActionCreator<P = unknown, M extends Meta = Meta> = TypedAction & ActionMatcher<P, M> & ActionFunction<P, M>
+export type ActionCreator<P, M extends Meta = Meta> = TypedAction & ActionMatcher<P, M> & ActionFunction<P, M>
 ```
 
 Added in v5.0.0

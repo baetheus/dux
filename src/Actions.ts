@@ -74,7 +74,7 @@ type ActionFunction<P, M extends Meta = Meta> = (payload: P, meta?: M) => Action
  *
  * @since 5.0.0
  */
-export type ActionCreator<P = unknown, M extends Meta = Meta> = TypedAction &
+export type ActionCreator<P, M extends Meta = Meta> = TypedAction &
   ActionMatcher<P, M> &
   ActionFunction<P, M>;
 
@@ -92,7 +92,7 @@ export type ExtractAction<T> = T extends ActionCreator<infer P, infer M>[]
  *
  * @since 5.0.0
  */
-export interface AsyncActionCreators<P = unknown, R = unknown, E = unknown, M extends Meta = Meta> {
+export interface AsyncActionCreators<P, R = unknown, E = unknown, M extends Meta = Meta> {
   readonly pending: ActionCreator<P, M>;
   readonly success: ActionCreator<Success<P, R>, M>;
   readonly failure: ActionCreator<Failure<P, E>, M>;
@@ -104,12 +104,12 @@ export interface AsyncActionCreators<P = unknown, R = unknown, E = unknown, M ex
  * @since 5.0.0
  */
 type ActionCreatorBundle<G extends string, M extends Meta = Meta> = {
-  simple: <P = unknown, M2 extends Meta = Meta>(
+  simple: <P, M2 extends Meta = Meta>(
     type: string,
     meta?: M2,
     error?: boolean
   ) => ActionCreator<P, M2 & Partial<M>>;
-  async: <P = unknown, R = unknown, E = unknown, M2 extends Meta = Meta>(
+  async: <P, R = unknown, E = unknown, M2 extends Meta = Meta>(
     type: string,
     meta?: M2
   ) => AsyncActionCreators<P, R, E, M2 & Partial<M>>;

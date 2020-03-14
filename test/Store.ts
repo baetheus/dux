@@ -230,4 +230,12 @@ describe("Store", () => {
       .subscribe(result => assert.deepStrictEqual([0, 0, 0], result), assert.fail, done);
     store.dispatch(modify(0), modify(0));
   });
+
+  it("filterEvery", () => {
+    const assertModify = S.filterEvery(modify, (_, a) => {
+      assert.deepStrictEqual(a, modify(a.value));
+    });
+    const store = S.createStore({}).addRunEverys(assertModify);
+    store.dispatch(modify(1), pong(null), modify(2));
+  });
 });

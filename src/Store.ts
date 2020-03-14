@@ -8,7 +8,7 @@
  */
 
 import { Reducer } from "./Reducers";
-import { TypedAction } from "./Actions";
+import { TypedAction, ActionCreator, Action } from "./Actions";
 import { BehaviorSubject, EMPTY, from, isObservable, Observable, of, Subject } from "rxjs";
 import {
   catchError,
@@ -35,7 +35,7 @@ const isNotNil = <T>(t?: T | undefined | null | void): t is T => t !== undefined
  * * Catches any everys that sync output Promise.reject
  * * Filters null/undefined/void outputs
  * * Catches any observables that drop to error channel
- * * Filters null/undefined/void events in observables
+ * * Filters null/undefined/void events in observables/promises
  */
 const wrapEvery = <S>(
   state: S,
@@ -43,7 +43,7 @@ const wrapEvery = <S>(
   every: RunEvery<S>
 ): Observable<TypedAction> => {
   let everyResult = Promise.resolve(every(state, action))
-    .catch(error => undefined)
+    .catch(_ => undefined)
     .then(res => (isNotNil(res) ? res : EMPTY))
     .then(res => (isObservable(res) ? res : of(res)));
   return from(everyResult).pipe(
@@ -63,6 +63,23 @@ const wrapOnce = <S>(
 ): Observable<TypedAction> => once(actions$, state$).pipe(catchError(() => EMPTY));
 
 /**
+ * A RunOnce function is called immediately after being added to the store.
+ * It can only return an observable of actions. This observable need not every
+ * emit an action. (So EMPTY and NEVER) are ok to return.
+ *
+ * @example
+ * import { RunOnce } from "../../src/Store";
+ * import { tap, withLatestFrom, mergeMapTo } from "rxjs/operators";
+ * import { EMPTY } from "rxjs";
+ *
+ * export const logger: RunOnce<{}> = (actions$, state$) => actions$.pipe(
+ *     withLatestFrom(state$),
+ *     tap(([action, state]) =>
+ *         console.log(`State after ${action.type} reduced:`, { state, action })
+ *     ),
+ *     mergeMapTo(EMPTY)
+ * );
+ *
  * @since 8.0.0
  */
 export type RunOnce<S> = (
@@ -71,23 +88,34 @@ export type RunOnce<S> = (
 ) => Observable<TypedAction>;
 
 /**
- * An Epic encapsulates side effects or temporal changes for the store.
- * It is given access to the current action and state, the action and
- * state observables, and may return nothing, an action, a promise that
- * contains an action, or an observable of actions.
+ * A RunEvery function is called after every store reduction. It can return nothing,
+ * an action, a promise that returns nothing or an action, or an observable of actions.
+ *
+ * To return multiple actions one can use an observable.
  *
  * @example
  * import { RunEvery } from "../../src/Store";
+ * import { from } from "rxjs";
  *
- * export const logger: RunEvery<any> = (action, state) => {
+ * export const logger: RunEvery<{}> = (state, action) => {
  *     console.log(`State after ${action.type} reduced:`, { state, action });
+ * }
+ *
+ * export const chainMultipleActions: RunEvery<{}> = (state, action) => {
+ *     if (action.type === 'MULTIPLE') {
+ *         return from([
+ *             { type: 'MULTI_1' },
+ *             { type: 'MULTI_2' },
+ *             { type: 'MULTI_3' },
+ *         ]);
+ *     }
  * }
  *
  * @since 8.0.0
  */
-export type RunEvery<S> = (
+export type RunEvery<S, A extends TypedAction = TypedAction> = (
   state: S,
-  action: TypedAction
+  action: A
 ) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void;
 
 /**
@@ -277,4 +305,33 @@ export const createStore = <S>(state: S): StoreApi<S> => {
   };
 
   return store;
+};
+
+/**
+ * filterEvery is like a caseFn for a RunEvery. It takes an ActionCreator
+ * from the Actions module and a RunEvery specific to that action. It will
+ * only run the supplied RunEvery after the supplied action matches the
+ * ActionCreator.
+ *
+ * @example
+ * import { filterEvery } from "../../src/Store";
+ * import { actionCreatorFactory } from "../../src/Actions";
+ *
+ * const { simple } = actionCreatorFactory("EXAMPLES");
+ * const simpleAction = simple<number>("SIMPLE")
+ *
+ * export const runEverySimpleAction = filterEvery(
+ *     simpleAction,
+ *     (state: any, action) => console.log("Saw a simpleAction", { state, action })
+ * );
+ *
+ * @since 8.2.0
+ */
+export const filterEvery = <S, P, M>(
+  ac: ActionCreator<P, M>,
+  fn: RunEvery<S, Action<P, M>>
+): RunEvery<S> => (state, action) => {
+  if (ac.match(action)) {
+    return fn(state, action);
+  }
 };

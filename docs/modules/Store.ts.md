@@ -18,6 +18,7 @@ Added in v8.0.0
 - [Selector (type alias)](#selector-type-alias)
 - [StoreApi (type alias)](#storeapi-type-alias)
 - [createStore](#createstore)
+- [filterEvery](#filterevery)
 
 ---
 
@@ -50,17 +51,17 @@ Added in v8.0.0
 
 # RunEvery (type alias)
 
-An Epic encapsulates side effects or temporal changes for the store.
-It is given access to the current action and state, the action and
-state observables, and may return nothing, an action, a promise that
-contains an action, or an observable of actions.
+A RunEvery function is called after every store reduction. It can return nothing,
+an action, a promise that returns nothing or an action, or an observable of actions.
+
+To return multiple actions one can use an observable.
 
 **Signature**
 
 ```ts
-export type RunEvery<S> = (
+export type RunEvery<S, A extends TypedAction = TypedAction> = (
   state: S,
-  action: TypedAction
+  action: A
 ) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void
 ```
 
@@ -68,9 +69,16 @@ export type RunEvery<S> = (
 
 ```ts
 import { RunEvery } from '../../src/Store'
+import { from } from 'rxjs'
 
-export const logger: RunEvery<any> = (action, state) => {
+export const logger: RunEvery<{}> = (state, action) => {
   console.log(`State after ${action.type} reduced:`, { state, action })
+}
+
+export const chainMultipleActions: RunEvery<{}> = (state, action) => {
+  if (action.type === 'MULTIPLE') {
+    return from([{ type: 'MULTI_1' }, { type: 'MULTI_2' }, { type: 'MULTI_3' }])
+  }
 }
 ```
 
@@ -78,10 +86,29 @@ Added in v8.0.0
 
 # RunOnce (type alias)
 
+A RunOnce function is called immediately after being added to the store.
+It can only return an observable of actions. This observable need not every
+emit an action. (So EMPTY and NEVER) are ok to return.
+
 **Signature**
 
 ```ts
 export type RunOnce<S> = (actions$: Observable<TypedAction>, state$: Observable<S>) => Observable<TypedAction>
+```
+
+**Example**
+
+```ts
+import { RunOnce } from '../../src/Store'
+import { tap, withLatestFrom, mergeMapTo } from 'rxjs/operators'
+import { EMPTY } from 'rxjs'
+
+export const logger: RunOnce<{}> = (actions$, state$) =>
+  actions$.pipe(
+    withLatestFrom(state$),
+    tap(([action, state]) => console.log(`State after ${action.type} reduced:`, { state, action })),
+    mergeMapTo(EMPTY)
+  )
 ```
 
 Added in v8.0.0
@@ -170,3 +197,35 @@ export const myStore = createStore(initialState)
 ```
 
 Added in v8.0.0
+
+# filterEvery
+
+filterEvery is like a caseFn for a RunEvery. It takes an ActionCreator
+from the Actions module and a RunEvery specific to that action. It will
+only run the supplied RunEvery after the supplied action matches the
+ActionCreator.
+
+**Signature**
+
+```ts
+export const filterEvery = <S, P, M>(
+  ac: ActionCreator<P, M>,
+  fn: RunEvery<S, Action<P, M>>
+): RunEvery<S> => (state, action) => ...
+```
+
+**Example**
+
+```ts
+import { filterEvery } from '../../src/Store'
+import { actionCreatorFactory } from '../../src/Actions'
+
+const { simple } = actionCreatorFactory('EXAMPLES')
+const simpleAction = simple<number>('SIMPLE')
+
+export const runEverySimpleAction = filterEvery(simpleAction, (state: any, action) =>
+  console.log('Saw a simpleAction', { state, action })
+)
+```
+
+Added in v8.2.0
