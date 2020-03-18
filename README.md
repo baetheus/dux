@@ -36,7 +36,7 @@ State management, batteries included. In version 8.0.0 @nll/dux is releasing its
 npm i @nll/dux
 ```
 
-## Documentation
+## [Documentation](https://nullpub.github.io/dux)
 
 @nll/dux is modular by default. The core modules are:
 
