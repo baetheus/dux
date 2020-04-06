@@ -16,7 +16,7 @@ Added in v8.0.0
 - [RunEvery (type alias)](#runevery-type-alias)
 - [RunOnce (type alias)](#runonce-type-alias)
 - [Selector (type alias)](#selector-type-alias)
-- [Store (type alias)](#Store-type-alias)
+- [Store (type alias)](#store-type-alias)
 - [createStore](#createstore)
 - [filterEvery](#filterevery)
 
@@ -30,21 +30,21 @@ for modifying or tracking the state before and after a reducer fires.
 **Signature**
 
 ```ts
-export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>;
+export type MetaReducer<S> = (reducer: Reducer<S>) => Reducer<S>
 ```
 
 **Example**
 
 ```ts
-import { MetaReducer } from "../../src/Store";
+import { MetaReducer } from '../../src/Store'
 
-export const loggingMetaReducer: MetaReducer<any> = (reducer) => {
+export const loggingMetaReducer: MetaReducer<any> = reducer => {
   return function loggingReducer(previousState, action) {
-    const state = reducer(previousState, action);
-    console.log(action.type, { previousState, state, action });
-    return state;
-  };
-};
+    const state = reducer(previousState, action)
+    console.log(action.type, { previousState, state, action })
+    return state
+  }
+}
 ```
 
 Added in v8.0.0
@@ -62,24 +62,24 @@ To return multiple actions one can use an observable.
 export type RunEvery<S, A extends TypedAction = TypedAction> = (
   state: S,
   action: A
-) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void;
+) => Observable<TypedAction> | Promise<TypedAction | void> | TypedAction | void
 ```
 
 **Example**
 
 ```ts
-import { RunEvery } from "../../src/Store";
-import { from } from "rxjs";
+import { RunEvery } from '../../src/Store'
+import { from } from 'rxjs'
 
 export const logger: RunEvery<{}> = (state, action) => {
-  console.log(`State after ${action.type} reduced:`, { state, action });
-};
+  console.log(`State after ${action.type} reduced:`, { state, action })
+}
 
 export const chainMultipleActions: RunEvery<{}> = (state, action) => {
-  if (action.type === "MULTIPLE") {
-    return from([{ type: "MULTI_1" }, { type: "MULTI_2" }, { type: "MULTI_3" }]);
+  if (action.type === 'MULTIPLE') {
+    return from([{ type: 'MULTI_1' }, { type: 'MULTI_2' }, { type: 'MULTI_3' }])
   }
-};
+}
 ```
 
 Added in v8.0.0
@@ -93,25 +93,22 @@ emit an action. (So EMPTY and NEVER) are ok to return.
 **Signature**
 
 ```ts
-export type RunOnce<S> = (
-  actions$: Observable<TypedAction>,
-  state$: Observable<S>
-) => Observable<TypedAction>;
+export type RunOnce<S> = (actions$: Observable<TypedAction>, state$: Observable<S>) => Observable<TypedAction>
 ```
 
 **Example**
 
 ```ts
-import { RunOnce } from "../../src/Store";
-import { tap, withLatestFrom, mergeMapTo } from "rxjs/operators";
-import { EMPTY } from "rxjs";
+import { RunOnce } from '../../src/Store'
+import { tap, withLatestFrom, mergeMapTo } from 'rxjs/operators'
+import { EMPTY } from 'rxjs'
 
 export const logger: RunOnce<{}> = (actions$, state$) =>
   actions$.pipe(
     withLatestFrom(state$),
     tap(([action, state]) => console.log(`State after ${action.type} reduced:`, { state, action })),
     mergeMapTo(EMPTY)
-  );
+  )
 ```
 
 Added in v8.0.0
@@ -124,17 +121,17 @@ part of the state.
 **Signature**
 
 ```ts
-export type Selector<S, O> = (state: S) => O;
+export type Selector<S, O> = (state: S) => O
 ```
 
 **Example**
 
 ```ts
-import { createStore } from "../../src/Store";
+import { createStore } from '../../src/Store'
 
-const store = createStore({ count: 0 }).addReducers((state, _) => ({ count: state.count + 1 }));
-store.select((state) => state.count).subscribe((count) => console.log(`New count is: ${count}`));
-store.dispatch({ type: "ANY_ACTION" });
+const store = createStore({ count: 0 }).addReducers((state, _) => ({ count: state.count + 1 }))
+store.select(state => state.count).subscribe(count => console.log(`New count is: ${count}`))
+store.dispatch({ type: 'ANY_ACTION' })
 ```
 
 Added in v8.0.0
@@ -147,20 +144,20 @@ The store API.
 
 ```ts
 export type Store<S> = {
-  getState: () => S;
-  setState: (s: S) => void;
-  addReducers: (...reducers: Reducer<S>[]) => Store<S>;
-  removeReducers: (...reducers: Reducer<S>[]) => Store<S>;
-  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>;
-  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>;
-  addRunEverys: (...everys: RunEvery<S>[]) => Store<S>;
-  removeRunEverys: (...everys: RunEvery<S>[]) => Store<S>;
-  addRunOnces: (...onces: RunOnce<S>[]) => Store<S>;
-  removeRunOnces: (...onces: RunOnce<S>[]) => Store<S>;
-  select: <O>(selector: Selector<S, O>, predicate?: (a: O, b: O) => boolean) => Observable<O>;
-  dispatch: (...as: TypedAction[]) => void;
-  destroy: () => void;
-};
+  getState: () => S
+  setState: (s: S) => void
+  addReducers: (...reducers: Reducer<S>[]) => Store<S>
+  removeReducers: (...reducers: Reducer<S>[]) => Store<S>
+  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>
+  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>
+  addRunEverys: (...everys: RunEvery<S>[]) => Store<S>
+  removeRunEverys: (...everys: RunEvery<S>[]) => Store<S>
+  addRunOnces: (...onces: RunOnce<S>[]) => Store<S>
+  removeRunOnces: (...onces: RunOnce<S>[]) => Store<S>
+  select: <O>(selector: Selector<S, O>, predicate?: (a: O, b: O) => boolean) => Observable<O>
+  dispatch: (...as: TypedAction[]) => void
+  destroy: () => void
+}
 ```
 
 Added in v8.0.0
@@ -189,14 +186,14 @@ export const createStore = <S>(state: S): Store<S> => ...
 **Example**
 
 ```ts
-import { createStore } from "../../src/Store";
+import { createStore } from '../../src/Store'
 
 type State = {
-  count: number;
-};
-const initialState: State = { count: 0 };
+  count: number
+}
+const initialState: State = { count: 0 }
 
-export const myStore = createStore(initialState);
+export const myStore = createStore(initialState)
 ```
 
 Added in v8.0.0
@@ -220,15 +217,15 @@ export const filterEvery = <S, P, M>(
 **Example**
 
 ```ts
-import { filterEvery } from "../../src/Store";
-import { actionCreatorFactory } from "../../src/Actions";
+import { filterEvery } from '../../src/Store'
+import { actionCreatorFactory } from '../../src/Actions'
 
-const { simple } = actionCreatorFactory("EXAMPLES");
-const simpleAction = simple<number>("SIMPLE");
+const { simple } = actionCreatorFactory('EXAMPLES')
+const simpleAction = simple<number>('SIMPLE')
 
 export const runEverySimpleAction = filterEvery(simpleAction, (state: any, action) =>
-  console.log("Saw a simpleAction", { state, action })
-);
+  console.log('Saw a simpleAction', { state, action })
+)
 ```
 
 Added in v8.2.0

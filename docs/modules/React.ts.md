@@ -31,7 +31,7 @@ Type annotation for React DependencyList
 **Signature**
 
 ```ts
-export type DependencyList = ReadonlyArray<any>;
+export type DependencyList = ReadonlyArray<any>
 ```
 
 Added in v8.0.0
@@ -43,7 +43,7 @@ Type annotation for React Dispatch
 **Signature**
 
 ```ts
-export type Dispatch<A> = (value: A) => void;
+export type Dispatch<A> = (value: A) => void
 ```
 
 Added in v8.0.0
@@ -55,7 +55,7 @@ Type annotation for React EffectCallback
 **Signature**
 
 ```ts
-export type EffectCallback = () => void | (() => void | undefined);
+export type EffectCallback = () => void | (() => void | undefined)
 ```
 
 Added in v8.0.0
@@ -67,7 +67,7 @@ Type annotation for React SetStateAction
 **Signature**
 
 ```ts
-export type SetStateAction<S> = S | ((prevState: S) => S);
+export type SetStateAction<S> = S | ((prevState: S) => S)
 ```
 
 Added in v8.0.0
@@ -79,7 +79,7 @@ Type annotation for the React useEffect hook.
 **Signature**
 
 ```ts
-export type UseEffect = (effect: EffectCallback, deps?: DependencyList) => void;
+export type UseEffect = (effect: EffectCallback, deps?: DependencyList) => void
 ```
 
 Added in v8.0.0
@@ -91,7 +91,7 @@ Type annotation for the React useState hook.
 **Signature**
 
 ```ts
-export type UseState = <S>(initialState: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
+export type UseState = <S>(initialState: S | (() => S)) => [S, Dispatch<SetStateAction<S>>]
 ```
 
 Added in v8.0.0
