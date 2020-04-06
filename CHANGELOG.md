@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.2...v8.0.0) (2020-04-06)
+
+
+### Features
+
+* filterEvery combinator ([620c0c8](https://github.com/nullpub/dux/commit/620c0c8d8de4a7554975c3b371ada25da23376ca))
+
+
+### Bug Fixes
+
+* changed StoreApi type to Store ([65ffad8](https://github.com/nullpub/dux/commit/65ffad89a7e275a0df33621184fb5842a4cc144e))
+* various type and test fixes ([42591d7](https://github.com/nullpub/dux/commit/42591d7dbb1a6e7924d63e39198d51dee44fd8e8))
+
 ### [8.1.1-prerelease.2](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.1...v8.1.1-prerelease.2) (2020-03-11)
 
 ### [8.1.1-prerelease.1](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.0...v8.1.1-prerelease.1) (2020-03-11)
