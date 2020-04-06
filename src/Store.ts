@@ -17,7 +17,7 @@ import {
   map,
   mergeAll,
   takeUntil,
-  withLatestFrom
+  withLatestFrom,
 } from "rxjs/operators";
 
 /**
@@ -43,9 +43,9 @@ const wrapEvery = <S>(
   every: RunEvery<S>
 ): Observable<TypedAction> => {
   let everyResult = Promise.resolve(every(state, action))
-    .catch(_ => undefined)
-    .then(res => (isNotNil(res) ? res : EMPTY))
-    .then(res => (isObservable(res) ? res : of(res)));
+    .catch((_) => undefined)
+    .then((res) => (isNotNil(res) ? res : EMPTY))
+    .then((res) => (isObservable(res) ? res : of(res)));
   return from(everyResult).pipe(
     mergeAll(),
     catchError(() => EMPTY),
@@ -161,17 +161,17 @@ export type Selector<S, O> = (state: S) => O;
  *
  * @since 8.0.0
  */
-export type StoreApi<S> = {
+export type Store<S> = {
   getState: () => S;
   setState: (s: S) => void;
-  addReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
-  removeReducers: (...reducers: Reducer<S>[]) => StoreApi<S>;
-  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
-  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => StoreApi<S>;
-  addRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>;
-  removeRunEverys: (...everys: RunEvery<S>[]) => StoreApi<S>;
-  addRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>;
-  removeRunOnces: (...onces: RunOnce<S>[]) => StoreApi<S>;
+  addReducers: (...reducers: Reducer<S>[]) => Store<S>;
+  removeReducers: (...reducers: Reducer<S>[]) => Store<S>;
+  addMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>;
+  removeMetaReducers: (...metaReducers: MetaReducer<S>[]) => Store<S>;
+  addRunEverys: (...everys: RunEvery<S>[]) => Store<S>;
+  removeRunEverys: (...everys: RunEvery<S>[]) => Store<S>;
+  addRunOnces: (...onces: RunOnce<S>[]) => Store<S>;
+  removeRunOnces: (...onces: RunOnce<S>[]) => Store<S>;
   select: <O>(selector: Selector<S, O>, predicate?: (a: O, b: O) => boolean) => Observable<O>;
   dispatch: (...as: TypedAction[]) => void;
   destroy: () => void;
@@ -202,7 +202,7 @@ export type StoreApi<S> = {
  *
  * @since 8.0.0
  */
-export const createStore = <S>(state: S): StoreApi<S> => {
+export const createStore = <S>(state: S): Store<S> => {
   const everyRemoval$ = new Subject<RunEvery<S>>();
   const onceRemoval$ = new Subject<RunOnce<S>>();
   const actions$ = new Subject<TypedAction>();
@@ -220,7 +220,7 @@ export const createStore = <S>(state: S): StoreApi<S> => {
   };
 
   const runEverys = (state: S, action: TypedAction): void => {
-    everys.forEach(every => {
+    everys.forEach((every) => {
       wrapEvery(state, action, every)
         .pipe(takeUntil(everyRemoval$.pipe(filter(objEqC(every)))))
         .subscribe(actions$);
@@ -228,7 +228,7 @@ export const createStore = <S>(state: S): StoreApi<S> => {
   };
 
   const runOnces = (onces: RunOnce<S>[]): void => {
-    onces.forEach(once => {
+    onces.forEach((once) => {
       wrapOnce(actions$, state$, once)
         .pipe(takeUntil(onceRemoval$.pipe(filter(objEqC(once)))))
         .subscribe(actions$);
@@ -252,9 +252,9 @@ export const createStore = <S>(state: S): StoreApi<S> => {
    * External API
    *
    */
-  const store: StoreApi<S> = {
+  const store: Store<S> = {
     getState: () => state$.getValue(),
-    setState: s => state$.next(s),
+    setState: (s) => state$.next(s),
     addReducers: (...rs) => {
       reducers = reducers.concat(rs);
       return store;
@@ -277,7 +277,7 @@ export const createStore = <S>(state: S): StoreApi<S> => {
     },
     removeRunEverys: (...es) => {
       everys = everys.filter(isNotIn(es));
-      es.forEach(every => everyRemoval$.next(every));
+      es.forEach((every) => everyRemoval$.next(every));
       return store;
     },
     addRunOnces: (...os) => {
@@ -287,21 +287,21 @@ export const createStore = <S>(state: S): StoreApi<S> => {
     },
     removeRunOnces: (...os) => {
       onces = onces.filter(isNotIn(os));
-      os.forEach(once => onceRemoval$.next(once));
+      os.forEach((once) => onceRemoval$.next(once));
       return store;
     },
     select: (selector, predicate = objEq) =>
       state$.pipe(map(selector), distinctUntilChanged(predicate)),
-    dispatch: (...as) => as.forEach(a => actions$.next(a)),
+    dispatch: (...as) => as.forEach((a) => actions$.next(a)),
     destroy: () => {
       runSub.unsubscribe();
-      everys.forEach(every => everyRemoval$.next(every));
-      onces.forEach(once => onceRemoval$.next(once));
+      everys.forEach((every) => everyRemoval$.next(every));
+      onces.forEach((once) => onceRemoval$.next(once));
       everyRemoval$.complete();
       onceRemoval$.complete();
       actions$.complete();
       state$.complete();
-    }
+    },
   };
 
   return store;

@@ -6,10 +6,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [8.1.1-prerelease.1](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.0...v8.1.1-prerelease.1) (2020-03-11)
 
-
 ### Bug Fixes
 
-* change monocle-ts imports, remove fp-ts dep ([d95362e](https://github.com/nullpub/dux/commit/d95362e6ee7d45555f0c2b860cdd00a76c44effa))
+- change monocle-ts imports, remove fp-ts dep ([d95362e](https://github.com/nullpub/dux/commit/d95362e6ee7d45555f0c2b860cdd00a76c44effa))
 
 ### [8.1.1-prerelease.0](https://github.com/nullpub/dux/compare/v8.1.0-prerelease.2...v8.1.1-prerelease.0) (2020-03-11)
 
@@ -21,175 +20,141 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [8.1.0-prerelease.0](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.5...v8.1.0-prerelease.0) (2020-03-10)
 
-
 ### Features
 
-* consolidation and React ([76b4e49](https://github.com/nullpub/dux/commit/76b4e49e2938903aa89afb6d3083f4c584e0008a))
+- consolidation and React ([76b4e49](https://github.com/nullpub/dux/commit/76b4e49e2938903aa89afb6d3083f4c584e0008a))
 
 ## [8.0.0](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.5...v8.0.0) (2020-03-10)
 
-
 ### Features
 
-* consolidation and React ([76b4e49](https://github.com/nullpub/dux/commit/76b4e49e2938903aa89afb6d3083f4c584e0008a))
+- consolidation and React ([76b4e49](https://github.com/nullpub/dux/commit/76b4e49e2938903aa89afb6d3083f4c584e0008a))
 
 ## [8.0.0-prerelease.5](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.4...v8.0.0-prerelease.5) (2020-03-04)
 
-
 ### Features
 
-* rename epic and add new once style epic. ([b9aa56d](https://github.com/nullpub/dux/commit/b9aa56d7d68cfc966bc741d4802cd41f7146a457))
+- rename epic and add new once style epic. ([b9aa56d](https://github.com/nullpub/dux/commit/b9aa56d7d68cfc966bc741d4802cd41f7146a457))
 
 ## [8.0.0-prerelease.4](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.3...v8.0.0-prerelease.4) (2020-03-04)
 
-
 ### Bug Fixes
 
-* rewrite store implementation to be less streamy ([62cc590](https://github.com/nullpub/dux/commit/62cc590e65dea49d9337ebc2d32b148b93d112eb))
+- rewrite store implementation to be less streamy ([62cc590](https://github.com/nullpub/dux/commit/62cc590e65dea49d9337ebc2d32b148b93d112eb))
 
 ## [8.0.0-prerelease.3](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.2...v8.0.0-prerelease.3) (2020-03-03)
 
-
 ### Features
 
-* added getState compatibility function for redux ([a2c3bac](https://github.com/nullpub/dux/commit/a2c3baceae37cddb4545c90c49e2b6e964584b54))
+- added getState compatibility function for redux ([a2c3bac](https://github.com/nullpub/dux/commit/a2c3baceae37cddb4545c90c49e2b6e964584b54))
 
 ## [8.0.0-prerelease.2](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.1...v8.0.0-prerelease.2) (2020-03-03)
 
-
 ### Bug Fixes
 
-* add StoreApi interface to fix createStore infer failures ([cd9341e](https://github.com/nullpub/dux/commit/cd9341eb5d218f1d9d61d517f8fc92ee7f08e36f))
+- add Store interface to fix createStore infer failures ([cd9341e](https://github.com/nullpub/dux/commit/cd9341eb5d218f1d9d61d517f8fc92ee7f08e36f))
 
 ## [8.0.0-prerelease.1](https://github.com/nullpub/dux/compare/v8.0.0-prerelease.0...v8.0.0-prerelease.1) (2020-03-03)
 
-
 ### Features
 
-* split out Epic and add fromAsyncAction action. ([6989d23](https://github.com/nullpub/dux/commit/6989d23c6b39fbd0dce235d632adf28bb7de2160))
+- split out Epic and add fromAsyncAction action. ([6989d23](https://github.com/nullpub/dux/commit/6989d23c6b39fbd0dce235d632adf28bb7de2160))
 
 ## [8.0.0-prerelease.0](https://github.com/nullpub/dux/compare/v7.1.3...v8.0.0-prerelease.0) (2020-03-02)
 
-
 ### ⚠ BREAKING CHANGES
 
-* removed many exports
+- removed many exports
 
-* added Store implementation (redux, ngrx, akita replacement)
-* exported ExtractAction
-* simplified Meta type
-* fixed types for filterActions
-* fixed types in reducers
-* implemented tests for Store
+- added Store implementation (redux, ngrx, akita replacement)
+- exported ExtractAction
+- simplified Meta type
+- fixed types for filterActions
+- fixed types in reducers
+- implemented tests for Store
 
 ### Features
 
-* version 8.0.0 improvements ([5867ed8](https://github.com/nullpub/dux/commit/5867ed8a0d9317f55f7791128246df6190009402))
-
+- version 8.0.0 improvements ([5867ed8](https://github.com/nullpub/dux/commit/5867ed8a0d9317f55f7791128246df6190009402))
 
 ### Bug Fixes
 
-* handle epic async throws (Promise.reject, throwError) ([4bcd998](https://github.com/nullpub/dux/commit/4bcd9989ec0115655de56d018d0acf8557df46bc))
+- handle epic async throws (Promise.reject, throwError) ([4bcd998](https://github.com/nullpub/dux/commit/4bcd9989ec0115655de56d018d0acf8557df46bc))
 
 ### [7.1.3](https://github.com/nullpub/dux/compare/v7.1.2...v7.1.3) (2020-01-29)
 
-
 ### Bug Fixes
 
-* added docs tags for new docs version ([9038514](https://github.com/nullpub/dux/commit/9038514f174aed699ea3dedd89bb20f122ed51b3))
-* added prettier dev dependency for docs ([0d0d545](https://github.com/nullpub/dux/commit/0d0d5453e4976e67db486d6993d4f74935d5d60b))
+- added docs tags for new docs version ([9038514](https://github.com/nullpub/dux/commit/9038514f174aed699ea3dedd89bb20f122ed51b3))
+- added prettier dev dependency for docs ([0d0d545](https://github.com/nullpub/dux/commit/0d0d5453e4976e67db486d6993d4f74935d5d60b))
 
 ### [7.1.2](https://github.com/nullpub/dux/compare/v7.1.1...v7.1.2) (2019-09-12)
 
-
 ### Bug Fixes
 
-* build error resulting from package.json and lockfile mismatch ([4e968d5](https://github.com/nullpub/dux/commit/4e968d5))
+- build error resulting from package.json and lockfile mismatch ([4e968d5](https://github.com/nullpub/dux/commit/4e968d5))
 
 ### [7.1.1](https://github.com/nullpub/dux/compare/v7.1.0...v7.1.1) (2019-09-12)
 
-
 ### Bug Fixes
 
-* add src to package.json files for source map resolution ([fd54929](https://github.com/nullpub/dux/commit/fd54929))
+- add src to package.json files for source map resolution ([fd54929](https://github.com/nullpub/dux/commit/fd54929))
 
 ## [7.1.0](https://github.com/nullpub/dux/compare/v7.0.3...v7.1.0) (2019-08-29)
 
-
 ### Features
 
-* added filterReducer combinator ([b10711c](https://github.com/nullpub/dux/commit/b10711c))
+- added filterReducer combinator ([b10711c](https://github.com/nullpub/dux/commit/b10711c))
 
 ### [7.0.3](https://github.com/nullpub/dux/compare/v7.0.2...v7.0.3) (2019-08-29)
 
 ## [7.0.2](https://github.com/nullpub/dux/compare/v7.0.1...v7.0.2) (2019-08-28)
 
-
 ### Bug Fixes
 
-* Effects.ts referenced wrong case ./AsyncMap as ./asyncMap ([b16abe7](https://github.com/nullpub/dux/commit/b16abe7))
-
-
+- Effects.ts referenced wrong case ./AsyncMap as ./asyncMap ([b16abe7](https://github.com/nullpub/dux/commit/b16abe7))
 
 ## [7.0.1](https://github.com/nullpub/dux/compare/v6.0.2...v7.0.1) (2019-08-28)
 
-
 ### Features
 
-* restructure library and implement full test coverage ([0aae50f](https://github.com/nullpub/dux/commit/0aae50f))
-
+- restructure library and implement full test coverage ([0aae50f](https://github.com/nullpub/dux/commit/0aae50f))
 
 ### BREAKING CHANGES
 
-* all import paths have changed
-
-
+- all import paths have changed
 
 # [7.0.0](https://github.com/nullpub/dux/compare/v6.0.2...v7.0.0) (2019-08-28)
 
-
 ### Features
 
-* restructure library and implement full test coverage ([0aae50f](https://github.com/nullpub/dux/commit/0aae50f))
-
+- restructure library and implement full test coverage ([0aae50f](https://github.com/nullpub/dux/commit/0aae50f))
 
 ### BREAKING CHANGES
 
-* all import paths have changed
-
-
+- all import paths have changed
 
 ## [6.0.2](https://github.com/nullpub/dux/compare/v6.0.1...v6.0.2) (2019-08-22)
 
-
 ### Bug Fixes
 
-* changed imports to lib instead of es6 ([9e30c03](https://github.com/nullpub/dux/commit/9e30c03))
-
-
+- changed imports to lib instead of es6 ([9e30c03](https://github.com/nullpub/dux/commit/9e30c03))
 
 ## [6.0.1](https://github.com/nullpub/dux/compare/v6.0.0...v6.0.1) (2019-08-14)
 
-
 ### Bug Fixes
 
-* fix builds to be properly importable (es6/lib) ([cf1e98e](https://github.com/nullpub/dux/commit/cf1e98e))
-
-
+- fix builds to be properly importable (es6/lib) ([cf1e98e](https://github.com/nullpub/dux/commit/cf1e98e))
 
 # [6.0.0](https://github.com/nullpub/dux/compare/v5.1.2...v6.0.0) (2019-08-14)
 
-
 ### Features
 
-* removed AsyncData and switched to DatumEither from @nll/datum ([56196f8](https://github.com/nullpub/dux/commit/56196f8))
-
+- removed AsyncData and switched to DatumEither from @nll/datum ([56196f8](https://github.com/nullpub/dux/commit/56196f8))
 
 ### BREAKING CHANGES
 
-* DatumEither added, AsyncData removed
-
-
+- DatumEither added, AsyncData removed
 
 ## [5.1.2](https://github.com/nullpub/dux/compare/v5.1.1...v5.1.2) (2019-08-12)
 

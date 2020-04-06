@@ -4,7 +4,7 @@
  * @since 8.0.0
  */
 
-import { StoreApi } from "./Store";
+import { Store } from "./Store";
 
 /**
  * Type annotation for React Dispatch
@@ -54,7 +54,7 @@ export type UseEffect = (effect: EffectCallback, deps?: DependencyList) => void;
  * Updates only when comparator detects a change (by default on strict equality change)
  * @since 8.0.0
  */
-export const useStoreFactory = <S>(store: StoreApi<S>, useState: UseState, useEffect: UseEffect) =>
+export const useStoreFactory = <S>(store: Store<S>, useState: UseState, useEffect: UseEffect) =>
   function useStore<O>(selector: (s: S) => O, comparator?: (p: O, n: O) => boolean) {
     const { dispatch, select, getState } = store;
     const [state, setState] = useState<O>(selector(getState()));
