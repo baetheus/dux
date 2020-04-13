@@ -1,6 +1,6 @@
 {
   "name": "@nll/dux",
-  "version": "8.1.2",
+  "version": "8.1.3",
   "description": "Flux and flux-like tools",
   "private": true,
   "sideEffects": false,

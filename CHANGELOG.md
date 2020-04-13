@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.3](https://github.com/nullpub/dux/compare/v8.1.2...v8.1.3) (2020-04-13)
+
+
+### Bug Fixes
+
+* fixed types for useDispatch ([b3771e8](https://github.com/nullpub/dux/commit/b3771e88b0daa63171e8ff0cb8a81566cd51f499))
+
 ### [8.1.2](https://github.com/nullpub/dux/compare/v8.0.1...v8.1.2) (2020-04-13)
 
 
