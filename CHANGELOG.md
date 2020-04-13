@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.1.0](https://github.com/nullpub/dux/compare/v8.0.1...v8.1.0) (2020-04-13)
+
+
+### Features
+
+* add useDispatchFactory to React utilities ([b757239](https://github.com/nullpub/dux/commit/b757239cb71a989bfb8d0890551b15c85d17fbb5))
+
 ### [8.0.1](https://github.com/nullpub/dux/compare/v8.1.1-prerelease.2...v8.0.1) (2020-04-06)
 
 
