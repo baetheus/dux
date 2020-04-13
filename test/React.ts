@@ -52,7 +52,7 @@ describe("React", () => {
     assert.doesNotThrow(() => {
       const useDispatch = R.useDispatchFactory(store, useCallback);
       const [a] = useDispatch(action);
-      console.log(a(1));
+      a(1);
     });
   });
 });
