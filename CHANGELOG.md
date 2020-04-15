@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.4](https://github.com/nullpub/dux/compare/v8.1.3...v8.1.4) (2020-04-15)
+
+
+### Bug Fixes
+
+* don't pass runEvery and runOnce completes ([13923dd](https://github.com/nullpub/dux/commit/13923dd6cc3d2c2a081049a012fa426632fb04de))
+
 ### [8.1.3](https://github.com/nullpub/dux/compare/v8.1.2...v8.1.3) (2020-04-13)
 
 
