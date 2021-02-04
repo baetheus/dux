@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.2.0](https://github.com/nullpub/dux/compare/v8.1.4...v8.2.0) (2021-02-04)
+
+
+### Features
+
+* migrate to new monocle-ts types ([db72bd0](https://github.com/nullpub/dux/commit/db72bd0bee76b611c8eac337b1a7789a5892b71a))
+
 ### [8.1.4](https://github.com/nullpub/dux/compare/v8.1.3...v8.1.4) (2020-04-15)
 
 
