@@ -1,4 +1,11 @@
-import { DatumEither, failure, initial, pending, success, toRefresh } from "@nll/datum/DatumEither";
+import {
+  DatumEither,
+  failure,
+  initial,
+  pending,
+  success,
+  toRefresh,
+} from "@nll/datum/DatumEither";
 import * as assert from "assert";
 import { Lens } from "monocle-ts";
 
@@ -12,14 +19,17 @@ const anotherAction = simple<number>("ANOTHER");
 const neverHandledAction = simple<any>("NEVER");
 
 const caseFn = R.caseFn(otherAction, (s: number, a) => s + a.value);
-const casesFn = R.casesFn([otherAction, anotherAction], (s: number, a) => s + a.value);
+const casesFn = R.casesFn(
+  [otherAction, anotherAction],
+  (s: number, a) => s + a.value
+);
 
 type State = {
   n: DatumEither<number, number>;
 };
 const idLens = new Lens(
   (s: State) => s.n,
-  n => s => ({ n })
+  (n) => (s) => ({ n })
 );
 
 type EntityState = {
@@ -27,11 +37,11 @@ type EntityState = {
 };
 const entityLens = new Lens(
   (s: EntityState) => s.ns,
-  ns => s => ({ ns })
+  (ns) => (s) => ({ ns })
 );
 const entityIdLens = new Lens(
   (s: number) => s.toString(),
-  a => s => parseInt(a, 10)
+  (a) => (s) => parseInt(a, 10)
 );
 
 describe("Reducers", () => {
@@ -66,27 +76,39 @@ describe("Reducers", () => {
     assert.deepStrictEqual(reducer(undefined, otherAction(1)), { n: initial });
 
     assert.deepStrictEqual(reducer(undefined, asyncAction.pending(1)), {
-      n: pending
+      n: pending,
     });
-    assert.deepStrictEqual(reducer(undefined, asyncAction.success({ params: 1, result: 2 })), {
-      n: success(2)
-    });
-    assert.deepStrictEqual(reducer(undefined, asyncAction.failure({ params: 1, error: 2 })), {
-      n: failure(2)
-    });
+    assert.deepStrictEqual(
+      reducer(undefined, asyncAction.success({ params: 1, result: 2 })),
+      {
+        n: success(2),
+      }
+    );
+    assert.deepStrictEqual(
+      reducer(undefined, asyncAction.failure({ params: 1, error: 2 })),
+      {
+        n: failure(2),
+      }
+    );
 
     assert.deepStrictEqual(reducer({ n: pending }, asyncAction.pending(1)), {
-      n: pending
+      n: pending,
     });
-    assert.deepStrictEqual(reducer({ n: pending }, asyncAction.success({ params: 1, result: 2 })), {
-      n: success(2)
-    });
-    assert.deepStrictEqual(reducer({ n: pending }, asyncAction.failure({ params: 1, error: 2 })), {
-      n: failure(2)
-    });
+    assert.deepStrictEqual(
+      reducer({ n: pending }, asyncAction.success({ params: 1, result: 2 })),
+      {
+        n: success(2),
+      }
+    );
+    assert.deepStrictEqual(
+      reducer({ n: pending }, asyncAction.failure({ params: 1, error: 2 })),
+      {
+        n: failure(2),
+      }
+    );
 
     assert.deepStrictEqual(reducer({ n: failure(1) }, asyncAction.pending(1)), {
-      n: toRefresh(failure(1))
+      n: toRefresh(failure(1)),
     });
     assert.deepStrictEqual(
       reducer({ n: failure(1) }, asyncAction.success({ params: 1, result: 2 })),
@@ -98,7 +120,7 @@ describe("Reducers", () => {
     );
 
     assert.deepStrictEqual(reducer({ n: success(1) }, asyncAction.pending(1)), {
-      n: toRefresh(success(1))
+      n: toRefresh(success(1)),
     });
     assert.deepStrictEqual(
       reducer({ n: success(1) }, asyncAction.success({ params: 1, result: 2 })),
@@ -110,31 +132,77 @@ describe("Reducers", () => {
     );
   });
 
+  it("composeRecord", () => {
+    const itemsLens = new Lens(
+      (s: { items: Record<string, number> }) => s.items,
+      (items) => (s) => ({ ...s, items })
+    );
+    const itemLens = R.composeRecord(itemsLens, 0);
+    const state = { items: { a: 1 } };
+    const modifiedState1 = { items: { a: 2 } };
+    const modifiedState2 = { items: { a: 1, b: 1 } };
+
+    assert.deepEqual(1, itemLens("a").get(state));
+    assert.deepEqual(0, itemLens("b").get(state));
+
+    assert.deepEqual(modifiedState1, itemLens("a").set(2)(state));
+    assert.deepEqual(modifiedState2, itemLens("b").set(1)(state));
+  });
+
   it("asyncEntityFactory", () => {
-    const asyncReducer = R.asyncEntityFactory(asyncAction, entityLens, entityIdLens);
-    const reducer = R.reducerDefaultFn<EntityState>({ ns: { "1": initial } }, asyncReducer);
+    const asyncReducer = R.asyncEntityFactory(
+      asyncAction,
+      entityLens,
+      entityIdLens
+    );
+    const reducer = R.reducerDefaultFn<EntityState>(
+      { ns: { "1": initial } },
+      asyncReducer
+    );
 
     assert.deepStrictEqual(reducer(undefined, otherAction(1)), {
       ns: {
-        "1": initial
-      }
+        "1": initial,
+      },
     });
+
+    assert.deepStrictEqual(
+      reducer(
+        {
+          ns: {
+            "1": success(2),
+          },
+        },
+        asyncAction.pending(1)
+      ),
+      {
+        ns: {
+          "1": toRefresh(success(2)),
+        },
+      }
+    );
 
     assert.deepStrictEqual(reducer(undefined, asyncAction.pending(1)), {
       ns: {
-        "1": pending
-      }
+        "1": pending,
+      },
     });
-    assert.deepStrictEqual(reducer(undefined, asyncAction.success({ params: 1, result: 2 })), {
-      ns: {
-        "1": success(2)
+    assert.deepStrictEqual(
+      reducer(undefined, asyncAction.success({ params: 1, result: 2 })),
+      {
+        ns: {
+          "1": success(2),
+        },
       }
-    });
-    assert.deepStrictEqual(reducer(undefined, asyncAction.failure({ params: 1, error: 2 })), {
-      ns: {
-        "1": failure(2)
+    );
+    assert.deepStrictEqual(
+      reducer(undefined, asyncAction.failure({ params: 1, error: 2 })),
+      {
+        ns: {
+          "1": failure(2),
+        },
       }
-    });
+    );
   });
 
   it("filterReducer", () => {

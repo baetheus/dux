@@ -9,7 +9,7 @@ import {
   filter,
   mapTo,
   withLatestFrom,
-  mergeMapTo
+  mergeMapTo,
 } from "rxjs/operators";
 
 import * as S from "../src/Store";
@@ -28,7 +28,7 @@ const reset = simple("RESET");
 
 const countReducer = R.reducerFn<Store>(
   R.caseFn(modify, (s, a) => ({ count: s.count + a.value })),
-  R.caseFn(reset, _ => initStore)
+  R.caseFn(reset, (_) => initStore)
 );
 
 const metaPropReducer = R.reducerFn<Store>(
@@ -38,7 +38,7 @@ const metaPropReducer = R.reducerFn<Store>(
   })
 );
 
-const pingRunEvery: S.RunEvery<any> = a => {
+const pingRunEvery: S.RunEvery<any> = (a) => {
   if (ping.match(a)) {
     return pong({});
   }
@@ -46,9 +46,10 @@ const pingRunEvery: S.RunEvery<any> = a => {
 
 const neverRun = () => NEVER;
 
-const pingRunOnce: S.RunOnce<any> = a$ => a$.pipe(filter(ping.match), mapTo(pong(undefined)));
+const pingRunOnce: S.RunOnce<any> = (a$) =>
+  a$.pipe(filter(ping.match), mapTo(pong(undefined)));
 
-const alterMetaReducer: S.MetaReducer<any> = r => (s, a) =>
+const alterMetaReducer: S.MetaReducer<any> = (r) => (s, a) =>
   r(s, Object.assign(a, { meta: { from: "meta" } }));
 
 describe("Store", () => {
@@ -66,7 +67,7 @@ describe("Store", () => {
     });
   });
 
-  it("destroys", done => {
+  it("destroys", (done) => {
     const store = S.createStore({ count: 0 })
       .addReducers(countReducer)
       .addMetaReducers(alterMetaReducer)
@@ -74,8 +75,8 @@ describe("Store", () => {
       .addRunOnces(pingRunOnce, neverRun);
 
     store
-      .select(s => s.count)
-      .subscribe(x => {
+      .select((s) => s.count)
+      .subscribe((x) => {
         if (x > 0) {
           assert.fail("SHOULD NEVER CALL");
         }
@@ -87,14 +88,14 @@ describe("Store", () => {
     }, 200);
   });
 
-  it("counts", done => {
+  it("counts", (done) => {
     const store = S.createStore(initStore).addReducers(countReducer);
 
     store
-      .select(s => s.count)
+      .select((s) => s.count)
       .pipe(take(4), toArray())
       .subscribe(
-        n => assert.deepStrictEqual([0, 1, 2, 3], n),
+        (n) => assert.deepStrictEqual([0, 1, 2, 3], n),
         assert.fail,
         () => done()
       );
@@ -106,8 +107,8 @@ describe("Store", () => {
     store.dispatch(modify(1), modify(1));
   });
 
-  it("runOnce", done => {
-    const doneRunOnce: S.RunOnce<any> = a$ =>
+  it("runOnce", (done) => {
+    const doneRunOnce: S.RunOnce<any> = (a$) =>
       a$.pipe(
         filter(pong.match),
         tap(() => done()),
@@ -118,7 +119,7 @@ describe("Store", () => {
       .dispatch(ping(null));
   });
 
-  it("runOnce has correct order", done => {
+  it("runOnce has correct order", (done) => {
     const modifyCheck: S.RunOnce<{ count: number }> = (a$, s$) =>
       a$.pipe(
         filter(modify.match),
@@ -140,8 +141,8 @@ describe("Store", () => {
       .addRunOnces(modifyCheck);
     store.dispatch(modify(1), reset(null), modify(2), reset(null), modify(100));
     store
-      .select(s => s.count)
-      .subscribe(c => {
+      .select((s) => s.count)
+      .subscribe((c) => {
         if (c === 100) {
           store.destroy();
           done();
@@ -149,9 +150,9 @@ describe("Store", () => {
       });
   });
 
-  it("runOnce handles errors", done => {
+  it("runOnce handles errors", (done) => {
     assert.doesNotThrow(() => {
-      const throwingRunOnce: S.RunOnce<any> = a$ =>
+      const throwingRunOnce: S.RunOnce<any> = (a$) =>
         a$.pipe(mergeMap(() => throwError("YOU SHALL NOT PASS!")));
       const store = S.createStore({}).addRunOnces(throwingRunOnce);
       store.dispatch(ping(null));
@@ -162,7 +163,7 @@ describe("Store", () => {
     });
   });
 
-  it("runEvery", done => {
+  it("runEvery", (done) => {
     const pingPongEpic: S.RunEvery<any> = (_, a) => {
       if (ping.match(a)) {
         return pong(null);
@@ -176,7 +177,7 @@ describe("Store", () => {
       .dispatch(ping(null));
   });
 
-  it("cancels runEvery", done => {
+  it("cancels runEvery", (done) => {
     const foreverEpic = () => of(pong(null)).pipe(delay(500), tap(assert.fail));
     const store = S.createStore({}).addRunEverys(foreverEpic);
     store.dispatch(ping(null));
@@ -186,7 +187,7 @@ describe("Store", () => {
     }, 200);
   });
 
-  it("runEvery promises", done => {
+  it("runEvery promises", (done) => {
     const pingRunEvery: S.RunEvery<any> = async (_, a) => {
       if (ping.match(a)) {
         return pong(null);
@@ -201,33 +202,53 @@ describe("Store", () => {
     store.dispatch(ping(null));
   });
 
-  it("handles rejecting runEvery", done => {
+  it("handles rejecting runEvery", (done) => {
     assert.doesNotThrow(() => {
-      const rejectEpic: S.RunEvery<any> = async () => Promise.reject("You shall not pass!");
-      const doneEpic: S.RunEvery<any> = (_, a) => (pong.match(a) ? done() : undefined);
+      const rejectEpic: S.RunEvery<any> = async () =>
+        Promise.reject("You shall not pass!") as any;
+      const doneEpic: S.RunEvery<any> = (_, a) =>
+        pong.match(a) ? done() : undefined;
+      const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
+      store.dispatch(ping(null), ping(null), pong(null));
+    });
+  });
+
+  it("handles throwing runEvery", (done) => {
+    assert.doesNotThrow(() => {
+      const rejectEpic: S.RunEvery<any> = async () => {
+        throw new Error("Busted");
+      };
+      const doneEpic: S.RunEvery<any> = (_, a) =>
+        pong.match(a) ? done() : undefined;
+      const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
+      store.dispatch(ping(null), ping(null), pong(null));
+    });
+  });
+
+  it("handles throwError runEvery", (done) => {
+    assert.doesNotThrow(() => {
+      const rejectEpic: S.RunEvery<any> = () =>
+        throwError("You shall not pass!");
+      const doneEpic: S.RunEvery<any> = (_, a) =>
+        pong.match(a) ? done() : undefined;
       const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
       store.dispatch(ping(null), pong(null));
     });
   });
 
-  it("handles throwError runEvery", done => {
-    assert.doesNotThrow(() => {
-      const rejectEpic: S.RunEvery<any> = () => throwError("You shall not pass!");
-      const doneEpic: S.RunEvery<any> = (_, a) => (pong.match(a) ? done() : undefined);
-      const store = S.createStore({}).addRunEverys(rejectEpic, doneEpic);
-      store.dispatch(ping(null), pong(null));
-    });
-  });
-
-  it("metaReduces", done => {
+  it("metaReduces", (done) => {
     const store = S.createStore(initStore)
       .addReducers(metaPropReducer)
       .addMetaReducers(alterMetaReducer);
 
     store
-      .select(s => s.meta)
+      .select((s) => s.meta)
       .pipe(take(3), toArray())
-      .subscribe(n => assert.deepStrictEqual([undefined, "meta", "action"], n), assert.fail, done);
+      .subscribe(
+        (n) => assert.deepStrictEqual([undefined, "meta", "action"], n),
+        assert.fail,
+        done
+      );
 
     store.dispatch(ping(null));
     store.removeMetaReducers(alterMetaReducer);
@@ -245,11 +266,11 @@ describe("Store", () => {
     assert.deepStrictEqual(store.getState(), { count: 1 });
   });
 
-  it("destroys", done => {
+  it("destroys", (done) => {
     const store = S.createStore({ count: 0 }).addReducers(countReducer);
     store
-      .select(s => s.count)
-      .subscribe(n => {
+      .select((s) => s.count)
+      .subscribe((n) => {
         if (n > 0) {
           assert.fail("Selector should never be called with a value over 0.");
         }
@@ -261,15 +282,19 @@ describe("Store", () => {
     }, 200);
   });
 
-  it("predicate select", done => {
+  it("predicate select", (done) => {
     const store = S.createStore({ count: 0 }).addReducers(countReducer);
     store
       .select(
-        s => s.count,
+        (s) => s.count,
         () => false
       )
       .pipe(take(3), toArray())
-      .subscribe(result => assert.deepStrictEqual([0, 0, 0], result), assert.fail, done);
+      .subscribe(
+        (result) => assert.deepStrictEqual([0, 0, 0], result),
+        assert.fail,
+        done
+      );
     store.dispatch(modify(0), modify(0));
   });
 

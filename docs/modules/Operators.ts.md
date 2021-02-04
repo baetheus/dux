@@ -4,7 +4,7 @@ nav_order: 2
 parent: Modules
 ---
 
-# Operators overview
+## Operators overview
 
 A collection of rxjs operators specific to working with observabled of actions.
 
@@ -14,17 +14,20 @@ Added in v8.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [FilterActions (interface)](#filteractions-interface)
-- [asyncConcatMap](#asyncconcatmap)
-- [asyncExhaustMap](#asyncexhaustmap)
-- [asyncMergeMap](#asyncmergemap)
-- [asyncSwitchMap](#asyncswitchmap)
-- [filterActions](#filteractions)
-- [mapAction](#mapaction)
+- [utils](#utils)
+  - [FilterActions (interface)](#filteractions-interface)
+  - [asyncConcatMap](#asyncconcatmap)
+  - [asyncExhaustMap](#asyncexhaustmap)
+  - [asyncMergeMap](#asyncmergemap)
+  - [asyncSwitchMap](#asyncswitchmap)
+  - [filterActions](#filteractions)
+  - [mapAction](#mapaction)
 
 ---
 
-# FilterActions (interface)
+# utils
+
+## FilterActions (interface)
 
 Interface for the filterActions operator.
 
@@ -104,67 +107,79 @@ export interface FilterActions {
 
 Added in v5.0.0
 
-# asyncConcatMap
+## asyncConcatMap
 
 Wraps an asyncAction in a concatMap
 
 **Signature**
 
 ```ts
-export const asyncConcatMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export declare const asyncConcatMap: <P, R, E, M extends Record<string, any>>(
+  action: AsyncActionCreators<P, R, E, M>,
+  project: (params: P, meta: M) => Observable<R>
+) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>>
 ```
 
 Added in v5.0.0
 
-# asyncExhaustMap
+## asyncExhaustMap
 
 Wraps an asyncAction in an exhaustMap
 
 **Signature**
 
 ```ts
-export const asyncExhaustMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export declare const asyncExhaustMap: <P, R, E, M extends Record<string, any>>(
+  action: AsyncActionCreators<P, R, E, M>,
+  project: (params: P, meta: M) => Observable<R>
+) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>>
 ```
 
 Added in v5.0.0
 
-# asyncMergeMap
+## asyncMergeMap
 
 Wraps an asyncAction in a mergeMap
 
 **Signature**
 
 ```ts
-export const asyncMergeMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export declare const asyncMergeMap: <P, R, E, M extends Record<string, any>>(
+  action: AsyncActionCreators<P, R, E, M>,
+  project: (params: P, meta: M) => Observable<R>
+) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>>
 ```
 
 Added in v5.0.0
 
-# asyncSwitchMap
+## asyncSwitchMap
 
 Wraps an asyncAction in a switchMap
 
 **Signature**
 
 ```ts
-export const asyncSwitchMap: <P, R, E, M extends Record<string, any>>(action: AsyncActionCreators<P, R, E, M>, project: (params: P, meta: M) => Observable<R>) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>> = ...
+export declare const asyncSwitchMap: <P, R, E, M extends Record<string, any>>(
+  action: AsyncActionCreators<P, R, E, M>,
+  project: (params: P, meta: M) => Observable<R>
+) => (obs: Observable<TypedAction>) => Observable<Action<Success<P, R>, M> | Action<Failure<P, E>, M>>
 ```
 
 Added in v5.0.0
 
-# filterActions
+## filterActions
 
 RxJS operator to filter acitons by multiple `ActionCreator`s.
 
 **Signature**
 
 ```ts
-export const filterActions: FilterActions = (...actions: ActionCreator<any, any>[]) => ...
+export declare const filterActions: FilterActions
 ```
 
 Added in v5.0.0
 
-# mapAction
+## mapAction
 
 Filters on an action and a projection, and merges the output
 of the projection with the original action.
@@ -174,11 +189,10 @@ ie. originalAction => [originalAction, ...project(originalAction)]
 **Signature**
 
 ```ts
-export const mapAction = <P, M extends Meta>(
+export declare const mapAction: <P, M extends Record<string, any>>(
   action: ActionCreator<P, M>,
   project: (action: Action<P, M>) => Action<any, any>[]
-) => (obs: Observable<Action<any, any>>) =>
-  obs.pipe(mergeMap(a => ...
+) => (obs: Observable<Action<any, any>>) => Observable<Action<any, any>>
 ```
 
 Added in v5.0.0

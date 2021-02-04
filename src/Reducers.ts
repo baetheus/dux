@@ -4,8 +4,14 @@
  * @since 5.0.0
  */
 
-import { DatumEither, failure, initial, success, toRefresh } from "@nll/datum/DatumEither";
-import { Lens } from "monocle-ts";
+import {
+  DatumEither,
+  failure,
+  initial,
+  success,
+  toRefresh,
+} from "@nll/datum/DatumEither";
+import { Lens, modify } from "monocle-ts/es6/Lens";
 
 import {
   Action,
@@ -13,8 +19,9 @@ import {
   AsyncActionCreators,
   ExtractAction,
   Meta,
-  TypedAction
+  TypedAction,
 } from "./Actions";
+import { pipe } from "./Utilities";
 
 /**
  * Reducer Interface
@@ -42,17 +49,19 @@ export const casesFn = <S, A extends ActionCreator<any, any>[]>(
   actionCreators: A,
   reducer: Reducer<S, ExtractAction<A>>
 ): Reducer<S, TypedAction> => (s, a) =>
-  actionCreators.some(({ match }) => match(a)) ? reducer(s, <ExtractAction<A>>a) : s;
+  actionCreators.some(({ match }) => match(a))
+    ? reducer(s, <ExtractAction<A>>a)
+    : s;
 
 /**
  * Compose caseFn and casesFn.
  *
  * @since 5.0.0
  */
-export const reducerFn = <S>(...cases: Array<Reducer<S, TypedAction>>): Reducer<S, TypedAction> => (
-  state,
-  action
-) => cases.reduce((s, r) => r(s, action), state);
+export const reducerFn = <S>(
+  ...cases: Array<Reducer<S, TypedAction>>
+): Reducer<S, TypedAction> => (state, action) =>
+  cases.reduce((s, r) => r(s, action), state);
 
 /**
  * Compose caseFn and casesFn with initial state.
@@ -77,7 +86,7 @@ type AsyncReducerFactory = <P, R, E, M, S>(
  */
 export const asyncReducerFactory: AsyncReducerFactory = (action, lens) =>
   reducerFn(
-    caseFn(action.pending, lens.modify(toRefresh)),
+    caseFn(action.pending, pipe(lens, modify(toRefresh))),
     caseFn(action.success, (s, a) => lens.set(success(a.value.result))(s)),
     caseFn(action.failure, (s, a) => lens.set(failure(a.value.error))(s))
   );
@@ -88,8 +97,27 @@ type AsyncEntityFactory = <P, R, E, S>(
   i: Lens<P, string>
 ) => Reducer<S, TypedAction>;
 
-const composeRecord = <S, T, K extends keyof T>(lens: Lens<S, T>, def: T[K]) => (id: K) =>
-  lens.compose(Lens.fromNullableProp<T>()(id, def));
+/**
+ * Similar to atKey with a default value
+ *
+ * @since 8.2.0
+ */
+export const composeRecord = <
+  S,
+  T extends Record<string, any>,
+  K extends keyof T
+>(
+  lens: Lens<S, T>,
+  def: T[K]
+) => (id: K): Lens<S, T[K]> => ({
+  get: (s) => pipe(lens.get(s), (t) => (t[id] === undefined ? def : t[id])),
+  set: (a) => (s) =>
+    pipe(
+      lens.get(s),
+      (_t): T => Object.assign({}, _t, { [id]: a }),
+      lens.set
+    )(s),
+});
 
 /**
  * Generate a reducer that handles a record of multiple DatumEither store values
@@ -99,7 +127,9 @@ const composeRecord = <S, T, K extends keyof T>(lens: Lens<S, T>, def: T[K]) => 
 export const asyncEntityFactory: AsyncEntityFactory = (action, lens, toId) => {
   const idLens = composeRecord(lens, initial);
   return reducerFn(
-    caseFn(action.pending, (s, a) => idLens(toId.get(a.value)).modify(toRefresh)(s)),
+    caseFn(action.pending, (s, a) =>
+      pipe(idLens(toId.get(a.value)), modify(toRefresh))(s)
+    ),
     caseFn(action.success, (s, a) =>
       idLens(toId.get(a.value.params)).set(success(a.value.result))(s)
     ),

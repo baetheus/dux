@@ -36,23 +36,23 @@
   },
   "homepage": "https://github.com/nullpub/dux#readme",
   "dependencies": {
-    "@nll/datum": "^3.0.2",
-    "monocle-ts": "^2.0.0",
+    "@nll/datum": "^3.3.1",
+    "monocle-ts": "^2.3.5",
     "rxjs": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
-    "@types/jest": "^25.1.4",
+    "@babel/core": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@types/jest": "^26.0.20",
     "@types/node": "^13.7.7",
-    "babel-jest": "^25.1.0",
-    "coveralls": "^3.0.9",
-    "docs-ts": "^0.3.1",
-    "jest": "^25.1.0",
+    "babel-jest": "^26.6.3",
+    "coveralls": "^3.1.0",
+    "docs-ts": "^0.5.3",
+    "jest": "^26.6.3",
     "prettier": "^1.19.1",
-    "standard-version": "^7.1.0",
-    "ts-jest": "^25.0.0",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.8.3"
+    "standard-version": "^9.1.0",
+    "ts-jest": "^26.5.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   }
 }

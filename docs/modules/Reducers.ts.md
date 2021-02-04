@@ -4,7 +4,7 @@ nav_order: 4
 parent: Modules
 ---
 
-# Reducers overview
+## Reducers overview
 
 Utility functions for filtering and combining reducers
 
@@ -14,18 +14,22 @@ Added in v5.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Reducer (type alias)](#reducer-type-alias)
-- [asyncEntityFactory](#asyncentityfactory)
-- [asyncReducerFactory](#asyncreducerfactory)
-- [caseFn](#casefn)
-- [casesFn](#casesfn)
-- [filterReducer](#filterreducer)
-- [reducerDefaultFn](#reducerdefaultfn)
-- [reducerFn](#reducerfn)
+- [utils](#utils)
+  - [Reducer (type alias)](#reducer-type-alias)
+  - [asyncEntityFactory](#asyncentityfactory)
+  - [asyncReducerFactory](#asyncreducerfactory)
+  - [caseFn](#casefn)
+  - [casesFn](#casesfn)
+  - [composeRecord](#composerecord)
+  - [filterReducer](#filterreducer)
+  - [reducerDefaultFn](#reducerdefaultfn)
+  - [reducerFn](#reducerfn)
 
 ---
 
-# Reducer (type alias)
+# utils
+
+## Reducer (type alias)
 
 Reducer Interface
 
@@ -37,107 +41,110 @@ export type Reducer<S, A extends TypedAction = TypedAction> = (s: S, a: A) => S
 
 Added in v5.0.0
 
-# asyncEntityFactory
+## asyncEntityFactory
 
 Generate a reducer that handles a record of multiple DatumEither store values
 
 **Signature**
 
 ```ts
-export const asyncEntityFactory: AsyncEntityFactory = (action, lens, toId) => ...
+export declare const asyncEntityFactory: AsyncEntityFactory
 ```
 
 Added in v5.0.0
 
-# asyncReducerFactory
+## asyncReducerFactory
 
 Generate a reducer that wraps a single DatumEither store value
 
 **Signature**
 
 ```ts
-export const asyncReducerFactory: AsyncReducerFactory = (action, lens) =>
-  reducerFn(
-    caseFn(action.pending, lens.modify(toRefresh)),
-    caseFn(action.success, (s, a) => lens.set(success(a.value.result))(s)),
-    caseFn(action.failure, (s, a) => ...
+export declare const asyncReducerFactory: AsyncReducerFactory
 ```
 
 Added in v5.0.0
 
-# caseFn
+## caseFn
 
 Case function matches ActionCreator to Reducer.
 
 **Signature**
 
 ```ts
-export const caseFn = <S, P, M>(
+export declare const caseFn: <S, P, M>(
   action: ActionCreator<P, M>,
   reducer: Reducer<S, Action<P, M>>
-): Reducer<S, TypedAction> => (s, a) => ...
+) => Reducer<S, TypedAction>
 ```
 
 Added in v5.0.0
 
-# casesFn
+## casesFn
 
 Case function matches multiple ActionCreators to a Reducer.
 
 **Signature**
 
 ```ts
-export const casesFn = <S, A extends ActionCreator<any, any>[]>(
+export declare const casesFn: <S, A extends ActionCreator<any, any>[]>(
   actionCreators: A,
   reducer: Reducer<S, ExtractAction<A>>
-): Reducer<S, TypedAction> => (s, a) =>
-  actionCreators.some(({ match }) => ...
+) => Reducer<S, TypedAction>
 ```
 
 Added in v5.0.0
 
-# filterReducer
+## composeRecord
+
+Similar to atKey with a default value
+
+**Signature**
+
+```ts
+export declare const composeRecord: <S, T extends Record<string, any>, K extends keyof T>(
+  lens: Lens<S, T>,
+  def: T[K]
+) => (id: K) => Lens<S, T[K]>
+```
+
+Added in v8.2.0
+
+## filterReducer
 
 Filters actions by first section of action type to bypass sections of the store
 
 **Signature**
 
 ```ts
-export const filterReducer = <S, P>(
-  match: string,
-  reducer: Reducer<S, TypedAction>
-): Reducer<S, TypedAction> => (state, action) => ...
+export declare const filterReducer: <S, P>(match: string, reducer: Reducer<S, TypedAction>) => Reducer<S, TypedAction>
 ```
 
 Added in v7.1.0
 
-# reducerDefaultFn
+## reducerDefaultFn
 
 Compose caseFn and casesFn with initial state.
 
 **Signature**
 
 ```ts
-export const reducerDefaultFn = <S>(
+export declare const reducerDefaultFn: <S>(
   initialState: S,
-  ...cases: Array<Reducer<S, TypedAction>>
-): Reducer<S | undefined, TypedAction> => (state = initialState, action) =>
-  cases.reduce((s, r) => ...
+  ...cases: Reducer<S, TypedAction>[]
+) => Reducer<S, TypedAction>
 ```
 
 Added in v5.0.0
 
-# reducerFn
+## reducerFn
 
 Compose caseFn and casesFn.
 
 **Signature**
 
 ```ts
-export const reducerFn = <S>(...cases: Array<Reducer<S, TypedAction>>): Reducer<S, TypedAction> => (
-  state,
-  action
-) => cases.reduce((s, r) => ...
+export declare const reducerFn: <S>(...cases: Reducer<S, TypedAction>[]) => Reducer<S, TypedAction>
 ```
 
 Added in v5.0.0
