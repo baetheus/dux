@@ -1,3 +1,7 @@
+<h1>
+  This library is no longer maintained. The core action and reducer functions have been migrated to the fun library and can be accessed on jsr.io [here](https://jsr.io/@baetheus/fun/doc/contrib/dux/~). Going forward dux is dropping specific support for Store, Observable, and React. The ideal replacement requires a refactor to use preact signals, which have a much simpler api and work great with the basic action/reducer combo that is still maintained. Sorry!
+</h1>
+
 <p align="center">
   A type safe functional toolkit for reducing boilerplate for Redux, Flux, Ngrx, and similar state management libraries.
 </p>
